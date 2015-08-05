@@ -1,0 +1,42 @@
+<?xml version="1.0" ?>
+<Parameter>
+  <General_Parameters>
+    	<Mode>CharacterPick</Mode>
+	    <!--Mode:
+        1.Check
+        2.PreChooseSingleObject
+        3.PreChooseMultiObject
+        4.FreeChoose
+        5.CharacterPick
+        -->
+	    <SrcFormat>picture</SrcFormat>
+	    <!--SrcFormat:1.picture 2.video-->
+      <Label>char</Label>
+      <Scale_Parameters>
+        	<ScaleBy>width</ScaleBy>
+	        <!--ScaleBy:1.width 2.height-->
+	        <IsNeedWHRatio>0</IsNeedWHRatio>
+	        <!--IsNeedWHRatio:1.NO(0) 2.YES(1)-->
+	        <WHRatio wRatio="1" hRatio="1"/>
+	        <!--WHRatio:(width height)-->
+      </Scale_Parameters>
+      
+      <Visual_Parameters>
+          <LineThickness thickness="3"/>
+          <Resolution width="1280" height="720"/>
+      </Visual_Parameters>
+  </General_Parameters>
+  
+  <Video_Parameters>
+      <VideoJumpFrame frame="25"/>
+      <VideoSrc>E:\ShipVideo\192.168.20.58_01_20141216150608986.avi</VideoSrc>
+  </Video_Parameters>
+
+  <Picture_Parameters>
+      <PictureSrc>D:\projects\tang\textDetection\data\box</PictureSrc>
+  </Picture_Parameters>
+	
+	<SavePath>D:\d</SavePath>
+	<CheckPath>D:\projects\pick\1</CheckPath>
+
+</Parameter>
