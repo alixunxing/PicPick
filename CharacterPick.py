@@ -1,4 +1,3 @@
-# -*- coding: cp936 -*-
 """
 @Create: 2015/7/8
 @author: Tang Yu-Jia
@@ -140,7 +139,7 @@ class CCharacterPick:
 
     def OnMouse(self,event,x,y,flags,param):
         """
-        drag mouse: LButton to draw object, RButton to draw mask
+        drag mouse: LButton to draw object, RButton to draw mask, DBClick mser bbox to choose object
         """
         if event == cv2.EVENT_LBUTTONDOWN:
             self.startX = x
@@ -156,7 +155,7 @@ class CCharacterPick:
             cv2.imshow(self.state, self.imgTmp)
         elif event == cv2.EVENT_LBUTTONUP:
             self.imgCurrent = self.imgTmp.copy()
-            if self.isAppRect:
+            if self.isAppRect and self.startX != self.endX and self.startY !=self.endY:
                 ###### if drawing started from the right-bottom, swap(startPoint, endPoint)
                 if self.startX > self.endX:
                     self.startX,self.endX = self.endX,self.startX
@@ -179,7 +178,7 @@ class CCharacterPick:
             cv2.imshow(self.state, self.imgTmp)
         elif event == cv2.EVENT_RBUTTONUP:
             self.imgCurrent = self.imgTmp.copy()
-            if self.isAppRect:
+            if self.isAppRect and self.startX != self.endX and self.startY !=self.endY:
                 ###### if drawing started from the right-bottom, swap(startPoint, endPoint)
                 if self.startX > self.endX:
                     self.startX,self.endX = self.endX,self.startX
