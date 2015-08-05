@@ -98,7 +98,7 @@ class CCharacterPick:
         Pick objects on pictures!!!
         """
         self.InitVar()
-        self.imgCurrent = self.img.copy()
+        self.imgChar = self.img.copy()
         charRectList = self.CharSegmentation(self.img)
         def Rect2Roi(rectList):
             roiList = list()
@@ -108,18 +108,20 @@ class CCharacterPick:
             return roiList
         self.charRoiList = Rect2Roi(charRectList)
         self.DrawRoiList(self.charRoiList, False)
-        cv2.imshow(self.state,self.imgCurrent)
+        cv2.imshow(self.state,self.imgChar)
+        self.imgCurrent = self.imgChar
         cv2.setMouseCallback(self.state, self.OnMouse)
         while True:
             keyInput = cv2.waitKey(0)
             if keyInput == ord('d'):
                 if self.roiPointList:
-                    self.imgCurrent = self.img.copy()
+                    self.imgCurrent = self.imgChar.copy()
                     self.roiPointList.pop()
                     self.maskList.pop()
-                    self.DrawRoiList(self.charRoiList, False)
-                    self.DrawRoiList()
-                cv2.imshow(self.state, self.imgCurrent)
+                    #self.DrawRoiList(self.charRoiList, False)
+                    self.DrawRoiList(self.roiPointList, self.maskList)
+                    cv2.imshow(self.state, self.imgCurrent)
+                keyInput = None
             if keyInput == 27:
                 flag = 'exit'
                 break
@@ -155,13 +157,12 @@ class CCharacterPick:
             cv2.rectangle(self.imgTmp,(self.startX,self.startY),(self.endX, self.endY),self.color_green,self.lineThickness)
             cv2.imshow(self.state, self.imgTmp)
         elif event == cv2.EVENT_LBUTTONUP:
-            self.imgCurrent = self.imgTmp.copy()
             if self.isAppRect and self.startX != self.endX and self.startY !=self.endY:
+                self.imgCurrent = self.imgTmp.copy()
                 ###### if drawing started from the right-bottom, swap(startPoint, endPoint)
                 if self.startX > self.endX:
                     self.startX,self.endX = self.endX,self.startX
                     self.startY,self.endY = self.endY,self.startY
-                subImg = self.img[self.startY:self.endY, self.startX:self.endX]
                 self.roiPointList.append([self.startX,self.startY,self.endX,self.endY])
                 self.maskList.append(0)
                 self.isAppRect = False
@@ -178,17 +179,17 @@ class CCharacterPick:
             cv2.rectangle(self.imgTmp,(self.startX,self.startY),(self.endX, self.endY), self.color_blue,self.lineThickness)
             cv2.imshow(self.state, self.imgTmp)
         elif event == cv2.EVENT_RBUTTONUP:
-            self.imgCurrent = self.imgTmp.copy()
             if self.isAppRect and self.startX != self.endX and self.startY !=self.endY:
+                self.imgCurrent = self.imgTmp.copy()
                 ###### if drawing started from the right-bottom, swap(startPoint, endPoint)
                 if self.startX > self.endX:
                     self.startX,self.endX = self.endX,self.startX
                     self.startY,self.endY = self.endY,self.startY
-                self.roiPointList.append([self.startX,self.startY,self.endX,self.endY])
+                self.roiPointList.append([self.startX, self.startY, self.endX, self.endY])
                 self.maskList.append(1)
                 self.isAppRect = False
         if event == cv2.EVENT_LBUTTONDBLCLK:
-            self.imgTmp = self.imgCurrent.copy()
+            #self.imgTmp = self.imgCurrent.copy()
             for charRoi in self.charRoiList:
                 startX = charRoi[0]
                 startY = charRoi[1]
@@ -197,9 +198,9 @@ class CCharacterPick:
                 if (startX < x < endX) and (startY < y < endY):
                     self.roiPointList.append(charRoi)
                     self.maskList.append(0)
-                    cv2.circle(self.imgTmp, (int((endX-startX)/2+startX), int((endY-startY)/2+startY)), self.lineThickness, self.color_green,-1)
-                    cv2.rectangle(self.imgTmp, (startX, startY),(endX, endY), self.color_green, self.lineThickness)
-                    cv2.imshow(self.state, self.imgTmp)
+                    cv2.circle(self.imgCurrent, (int((endX-startX)/2+startX), int((endY-startY)/2+startY)), self.lineThickness, self.color_green,-1)
+                    cv2.rectangle(self.imgCurrent, (startX, startY),(endX, endY), self.color_green, self.lineThickness)
+                    cv2.imshow(self.state, self.imgCurrent)
 
     def DrawRoiList(self, roiPointList = list(), maskList = list()):
         """
@@ -209,12 +210,12 @@ class CCharacterPick:
             if maskList:
                 if maskList[idx] == 0:
                     cv2.circle(self.imgCurrent,(int((roiPoint[2]-roiPoint[0])/2+roiPoint[0]), int((roiPoint[3]-roiPoint[1])/2+ roiPoint[1])),self.lineThickness,self.color_green,-1)
-                    cv2.rectangle(self.imgCurrent,(roiPoint[0], roiPoint[1]),(roiPoint[2],roiPoint[3]),self.color_green,3)
+                    cv2.rectangle(self.imgCurrent,(roiPoint[0], roiPoint[1]),(roiPoint[2],roiPoint[3]),self.color_green,self.lineThickness)
                 elif maskList[idx] == 1:
                     cv2.circle(self.imgCurrent,(int((roiPoint[2]-roiPoint[0])/2+roiPoint[0]), int((roiPoint[3]-roiPoint[1])/2+roiPoint[1])),self.lineThickness,self.color_blue,-1)
-                    cv2.rectangle(self.imgCurrent,(roiPoint[0],roiPoint[1]),(roiPoint[2],roiPoint[3]),self.color_blue,3)
+                    cv2.rectangle(self.imgCurrent,(roiPoint[0],roiPoint[1]),(roiPoint[2],roiPoint[3]),self.color_blue,self.lineThickness)
             else: # if maskList = [], draw init MSER results
-                cv2.rectangle(self.imgCurrent,(roiPoint[0],roiPoint[1]),(roiPoint[2],roiPoint[3]),self.color_violet,3)
+                cv2.rectangle(self.imgChar,(roiPoint[0],roiPoint[1]),(roiPoint[2],roiPoint[3]),self.color_violet,self.lineThickness)
 
 
     #def PicturePicPick(self, img ):
