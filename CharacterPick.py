@@ -99,14 +99,14 @@ class CCharacterPick:
         """
         self.InitVar()
         self.imgCurrent = self.img.copy()
-        charList = self.CharSegmentation(self.img)
+        charRectList = self.CharSegmentation(self.img)
         def Rect2Roi(rectList):
             roiList = list()
             for rect in rectList:
                 roi = [rect[0], rect[1], rect[2]+rect[0]-1, rect[3]+rect[1]-1]
                 roiList.append(roi)
             return roiList
-        self.charRoiList = Rect2Roi(charList)
+        self.charRoiList = Rect2Roi(charRectList)
         self.DrawRoiList(self.charRoiList, False)
         cv2.imshow(self.state,self.imgCurrent)
         cv2.setMouseCallback(self.state, self.OnMouse)
@@ -117,6 +117,7 @@ class CCharacterPick:
                     self.imgCurrent = self.img.copy()
                     self.roiPointList.pop()
                     self.maskList.pop()
+                    self.DrawRoiList(self.charRoiList, False)
                     self.DrawRoiList()
                 cv2.imshow(self.state, self.imgCurrent)
             if keyInput == 27:
