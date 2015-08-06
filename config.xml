@@ -33,7 +33,7 @@
   </Video_Parameters>
 
   <Picture_Parameters>
-      <PictureSrc>D:\projects\textDetection\data\box</PictureSrc>
+      <PictureSrc>D:\projects\tang\textDetection\data\box</PictureSrc>
   </Picture_Parameters>
 	
 	<SavePath>D:\d</SavePath>

@@ -5,7 +5,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{64a8e568-1ece-4188-bb8a-759a29560988}</ProjectGuid>
     <ProjectHome>..\</ProjectHome>
-    <StartupFile>CharacterPick.py</StartupFile>
+    <StartupFile>main.py</StartupFile>
     <SearchPath />
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>

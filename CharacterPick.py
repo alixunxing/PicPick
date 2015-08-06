@@ -108,18 +108,22 @@ class CCharacterPick:
             return roiList
         self.charRoiList = Rect2Roi(charRectList)
         self.DrawRoiList(self.charRoiList, False)
-        cv2.imshow(self.state,self.imgChar)
-        self.imgCurrent = self.imgChar
+        cv2.imshow(self.state, self.imgChar)
+        self.imgCurrent = self.imgChar.copy()
         cv2.setMouseCallback(self.state, self.OnMouse)
         while True:
             keyInput = cv2.waitKey(0)
             if keyInput == ord('d'):
+                self.imgCurrent = self.imgChar.copy()
                 if self.roiPointList:
-                    self.imgCurrent = self.imgChar.copy()
                     self.roiPointList.pop()
                     self.maskList.pop()
-                    #self.DrawRoiList(self.charRoiList, False)
-                    self.DrawRoiList(self.roiPointList, self.maskList)
+                    if self.maskList:
+                        self.DrawRoiList(self.roiPointList, self.maskList)
+                        cv2.imshow(self.state, self.imgCurrent)
+                    else:
+                        cv2.imshow(self.state, self.imgCurrent)
+                else:
                     cv2.imshow(self.state, self.imgCurrent)
                 keyInput = None
             if keyInput == 27:
@@ -161,9 +165,9 @@ class CCharacterPick:
                 self.imgCurrent = self.imgTmp.copy()
                 ###### if drawing started from the right-bottom, swap(startPoint, endPoint)
                 if self.startX > self.endX:
-                    self.startX,self.endX = self.endX,self.startX
-                    self.startY,self.endY = self.endY,self.startY
-                self.roiPointList.append([self.startX,self.startY,self.endX,self.endY])
+                    self.startX, self.endX = self.endX, self.startX
+                    self.startY, self.endY = self.endY, self.startY
+                self.roiPointList.append([self.startX, self.startY, self.endX, self.endY])
                 self.maskList.append(0)
                 self.isAppRect = False
         if event == cv2.EVENT_RBUTTONDOWN:
