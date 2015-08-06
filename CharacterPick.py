@@ -61,7 +61,7 @@ class CCharacterPick:
     ###  self.imgTmp -> when you drag mouse the dragging rectangle is drawed on self.imgTmp
     ###
     ############################################################################################
-    def __init__(self):   
+    def __init__(self):
         self.startX = self.startY = -1
         self.savePic = False
         self.endX = self.endY = -1
@@ -73,6 +73,9 @@ class CCharacterPick:
         self.color_green = (0, 255, 0)
         self.color_violet= (211,0,148)
         self.threshold = 0.8
+        self.roiPointList = list()
+        self.charRoiList = list() 
+        self.maskList = list()
    
     def InputInfo(self, img, imgName, state, label, SavePathDict, VisualParamDict):
         '''
@@ -84,9 +87,6 @@ class CCharacterPick:
         self.label = label
         self.SavePathDict = SavePathDict
         self.lineThickness = VisualParamDict['LineThickness']
-        self.roiPointList = list()
-        self.charRoiList = list() 
-        self.maskList = list()
 
 
     def InitVar(self):

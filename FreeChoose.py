@@ -1,4 +1,3 @@
-# -*- coding: cp936 -*-
 """
 @Create: 2015/7/8
 @author: Tang Yu-Jia
@@ -9,18 +8,32 @@ import cv2
 class CFreeChoose:
     def __init__(self):
         self.startX = self.startY = -1
+        self.savePic = False
         self.endX = self.endY = -1
+        self.width = self.height = 0
+        self.isAppRect = False # Is a Rect appended into list right now?
+        self.roiPointList = list() # start point and end point
+        self.maskList = list() # len(mask) == len(roiPointList)
+        self.color_blue  = (255, 0, 0)
+        self.color_green = (0, 255, 0)
 
-        self.copyImg = None
-        self.saveImg = None
+        self.roiPointList = list()
+        self.maskList = list()
         self.rectParas = []
         self.saveRect = False
-
+   
+    def InputInfo(self, img, imgName, state, label, SavePathDict, VisualParamDict):
+        '''
+        the 'clean' image without any drawing and the image title(a.k. the state) is inputted by this function
+        '''
+        self.img = img
+        self.imgName = imgName
+        self.state = state
+        self.label = label
+        self.SavePathDict = SavePathDict
+        self.lineThickness = VisualParamDict['LineThickness']
         
-    def DrawRectangle(self,event,x,y,flags,param):
-        """
-        功能：鼠标响应处理函数，响应鼠标左键按下，左键拖拽，左键松开，右键按下，右键拖拽，右键松开。
-        """
+    def OnMouse(self,event,x,y,flags,param):
         if event == cv2.EVENT_LBUTTONDOWN:
             self.startX = x
             self.startY = y
@@ -29,37 +42,33 @@ class CFreeChoose:
             self.copyImg = self.saveImg.copy()
             self.endX = x
             self.endY = y
-            cv2.circle(self.copyImg,((self.endX-self.startX)/2+self.startX,\
-            (self.endY-self.startY)/2+self.startY),3,(0,255,0),-1)
-            cv2.rectangle(self.copyImg,(self.startX,self.startY),(self.endX,\
-            self.endY),(0,255,0),3)
-            cv2.imshow(self.imgName,self.copyImg)
+            cv2.circle(self.imgTmp,(int((self.endX-self.startX)/2+self.startX), int((self.endY-self.startY)/2+self.startY)),self.lineThickness,self.color_green,-1)
+            cv2.rectangle(self.imgTmp,(self.startX,self.startY),(self.endX, self.endY),self.color_green,self.lineThickness)
+            cv2.imshow(self.state, self.imgTmp)
         elif event == cv2.EVENT_LBUTTONUP:
             self.saveImg = self.copyImg.copy()
             if self.saveRect == True:
                 self.rectParas.append([self.startX,self.startY,self.endX,self.endY,0])
                 self.saveRect = False
-        elif event == cv2.EVENT_RBUTTONDOWN:
+        if event == cv2.EVENT_RBUTTONDOWN:
             self.startX = x
             self.startY = y
         elif event == cv2.EVENT_MOUSEMOVE and flags == cv2.EVENT_FLAG_RBUTTON:
             self.copyImg = self.saveImg.copy()
             self.endX = x
             self.endY = y
-            cv2.circle(self.copyImg,((self.endX-self.startX)/2+self.startX,\
-            (self.endY-self.startY)/2+self.startY),3,(255,0,0),-1)
-            cv2.rectangle(self.copyImg,(self.startX,self.startY),(self.endX,\
-            self.endY),(255,0,0),3)
-            cv2.imshow(self.imgName,self.copyImg)
+
+            cv2.circle(self.imgTmp,(int((self.endX-self.startX)/2+self.startX), int((self.endY-self.startY)/2+self.startY)),self.lineThickness,self.color_blue,-1)
+            cv2.rectangle(self.imgTmp,(self.startX,self.startY),(self.endX, self.endY), self.color_blue,self.lineThickness)
+            cv2.imshow(self.state, self.imgTmp)
         elif event == cv2.EVENT_RBUTTONUP:
             self.saveImg = self.copyImg.copy()
-            self.rectParas.append([self.startX,self.startY,self.endX,self.endY\
-            ,1])
+            self.rectParas.append([self.startX,self.startY,self.endX,self.endY,1])
         
     
     def PicturePicPick(self,img,imgName):
         """
-        功能：图片操作。
+        
         """
         self.saveImg = img.copy()
         self.imgName=imgName
@@ -87,7 +96,7 @@ class CFreeChoose:
         
     def VideoPicPick(self,cap,currentPos):
         """
-        功能：视频操作。
+        
         """
         forwardFrameRate = 5
         CV_CAP_PROP_POS_FRAMES = 1
@@ -140,24 +149,19 @@ class CFreeChoose:
             if cap.get(CV_CAP_PROP_POS_FRAMES)+1 > cap.get(CV_CAP_PROP_FRAME_COUNT):
                 return [],[],0
                 
-                            
-    def DrawRectangles(self):
+    def DrawRoiList(self, roiPointList = list(), maskList = list()):
         """
-        功能：根据坐标参数画框。
+        draw all roiPoints, including objects and masks
         """
-        for rectPara in self.rectParas:
-            if rectPara[4] == 0:
-                cv2.circle(self.saveImg,((rectPara[2]-rectPara[0])\
-                /2+rectPara[0],(rectPara[3]-rectPara[1])/2+\
-                rectPara[1]),3,(0,255,0),-1)
-                cv2.rectangle(self.saveImg,(rectPara[0],\
-                rectPara[1]),(rectPara[2],rectPara[3]),(0,255,0),3)
-            if rectPara[4] == 1:
-                cv2.circle(self.saveImg,((rectPara[2]-rectPara[0])\
-                /2+rectPara[0],(rectPara[3]-rectPara[1])/2+\
-                rectPara[1]),3,(255,0,0),-1)
-                cv2.rectangle(self.saveImg,(rectPara[0],rectPara[1]),\
-                (rectPara[2],rectPara[3]),(255,0,0),3)
+        for idx, roiPoint in enumerate(roiPointList):
+            if maskList:
+                if maskList[idx] == 0:
+                    cv2.circle(self.imgCurrent,(int((roiPoint[2]-roiPoint[0])/2+roiPoint[0]), int((roiPoint[3]-roiPoint[1])/2+ roiPoint[1])),self.lineThickness,self.color_green,-1)
+                    cv2.rectangle(self.imgCurrent,(roiPoint[0], roiPoint[1]),(roiPoint[2],roiPoint[3]),self.color_green,self.lineThickness)
+                elif maskList[idx] == 1:
+                    cv2.circle(self.imgCurrent,(int((roiPoint[2]-roiPoint[0])/2+roiPoint[0]), int((roiPoint[3]-roiPoint[1])/2+roiPoint[1])),self.lineThickness,self.color_blue,-1)
+                    cv2.rectangle(self.imgCurrent,(roiPoint[0],roiPoint[1]),(roiPoint[2],roiPoint[3]),self.color_blue,self.lineThickness)
+
 
             
             
