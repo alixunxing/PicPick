@@ -7,8 +7,3 @@ from PicPick import CPicPick
 if __name__ == '__main__':
     doPicPick = CPicPick()
     doPicPick.PicPick()
-
-        
-        
-
-        

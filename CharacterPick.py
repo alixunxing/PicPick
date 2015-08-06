@@ -200,11 +200,20 @@ class CCharacterPick:
                 endX   = charRoi[2]
                 endY   = charRoi[3]
                 if (startX < x < endX) and (startY < y < endY):
-                    self.roiPointList.append(charRoi)
-                    self.maskList.append(0)
-                    cv2.circle(self.imgCurrent, (int((endX-startX)/2+startX), int((endY-startY)/2+startY)), self.lineThickness, self.color_green,-1)
-                    cv2.rectangle(self.imgCurrent, (startX, startY),(endX, endY), self.color_green, self.lineThickness)
-                    cv2.imshow(self.state, self.imgCurrent)
+                    isExist = False
+                    for roiPoint in self.roiPointList:
+                        if roiPoint == charRoi:
+                            isExist = True
+                            break
+                    if isExist:
+                        break
+                    else:
+                        self.roiPointList.append(charRoi)
+                        self.maskList.append(0)
+                        cv2.circle(self.imgCurrent, (int((endX-startX)/2+startX), int((endY-startY)/2+startY)), self.lineThickness, self.color_green,-1)
+                        cv2.rectangle(self.imgCurrent, (startX, startY),(endX, endY), self.color_green, self.lineThickness)
+                        cv2.imshow(self.state, self.imgCurrent)
+                        break
 
     def DrawRoiList(self, roiPointList = list(), maskList = list()):
         """
