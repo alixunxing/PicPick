@@ -2,7 +2,11 @@
 @Create: 2015/7/8
 @author: Tang Yu-Jia
 """
+from __future__ import division
 import cv2
+import numpy as np
+import math
+import os
 
 
 class CFreeChoose:
@@ -19,7 +23,6 @@ class CFreeChoose:
 
         self.roiPointList = list()
         self.maskList = list()
-        self.rectParas = []
         self.saveRect = False
    
     def InputInfo(self, img, imgName, state, label, SavePathDict, VisualParamDict):
@@ -34,27 +37,37 @@ class CFreeChoose:
         self.lineThickness = VisualParamDict['LineThickness']
         
     def OnMouse(self,event,x,y,flags,param):
+        """
+        drag mouse: LButton to draw object, RButton to draw mask
+        """
         if event == cv2.EVENT_LBUTTONDOWN:
             self.startX = x
             self.startY = y
         elif event == cv2.EVENT_MOUSEMOVE and flags == cv2.EVENT_FLAG_LBUTTON:
-            self.saveRect = True
-            self.copyImg = self.saveImg.copy()
+            self.isAppRect = True
+            self.imgTmp = self.imgCurrent.copy()
             self.endX = x
             self.endY = y
+
             cv2.circle(self.imgTmp,(int((self.endX-self.startX)/2+self.startX), int((self.endY-self.startY)/2+self.startY)),self.lineThickness,self.color_green,-1)
             cv2.rectangle(self.imgTmp,(self.startX,self.startY),(self.endX, self.endY),self.color_green,self.lineThickness)
             cv2.imshow(self.state, self.imgTmp)
         elif event == cv2.EVENT_LBUTTONUP:
-            self.saveImg = self.copyImg.copy()
-            if self.saveRect == True:
-                self.rectParas.append([self.startX,self.startY,self.endX,self.endY,0])
-                self.saveRect = False
+            if self.isAppRect and self.startX != self.endX and self.startY !=self.endY:
+                self.imgCurrent = self.imgTmp.copy()
+                ###### if drawing started from the right-bottom, swap(startPoint, endPoint)
+                if self.startX > self.endX:
+                    self.startX, self.endX = self.endX, self.startX
+                    self.startY, self.endY = self.endY, self.startY
+                self.roiPointList.append([self.startX, self.startY, self.endX, self.endY])
+                self.maskList.append(0)
+                self.isAppRect = False
         if event == cv2.EVENT_RBUTTONDOWN:
             self.startX = x
             self.startY = y
         elif event == cv2.EVENT_MOUSEMOVE and flags == cv2.EVENT_FLAG_RBUTTON:
-            self.copyImg = self.saveImg.copy()
+            self.isAppRect = True
+            self.imgTmp = self.imgCurrent.copy()
             self.endX = x
             self.endY = y
 
@@ -62,38 +75,62 @@ class CFreeChoose:
             cv2.rectangle(self.imgTmp,(self.startX,self.startY),(self.endX, self.endY), self.color_blue,self.lineThickness)
             cv2.imshow(self.state, self.imgTmp)
         elif event == cv2.EVENT_RBUTTONUP:
-            self.saveImg = self.copyImg.copy()
-            self.rectParas.append([self.startX,self.startY,self.endX,self.endY,1])
-        
+            if self.isAppRect and self.startX != self.endX and self.startY !=self.endY:
+                self.imgCurrent = self.imgTmp.copy()
+                ###### if drawing started from the right-bottom, swap(startPoint, endPoint)
+                if self.startX > self.endX:
+                    self.startX,self.endX = self.endX,self.startX
+                    self.startY,self.endY = self.endY,self.startY
+                self.roiPointList.append([self.startX, self.startY, self.endX, self.endY])
+                self.maskList.append(1)
+                self.isAppRect = False
+  
+    def InitVar(self):
+        self.roiPointList  = list()
+        self.maskList = list()      
     
-    def PicturePicPick(self,img,imgName):
+    def PicturePicPick(self):
         """
-        
+        Pick objects on pictures!!!
         """
-        self.saveImg = img.copy()
-        self.imgName=imgName
-        self.rectParas = []
-        cv2.setMouseCallback(imgName,self.DrawRectangle)
-        #self.rectParas = []
-        cv2.imshow(imgName,img) 
-        while(1):
+        self.InitVar()
+        self.imgCurrent = self.img.copy()
+        cv2.imshow(self.state, self.imgCurrent)
+
+        cv2.setMouseCallback(self.state, self.OnMouse)
+        while True:
             keyInput = cv2.waitKey(0)
-            if keyInput == 27:
-                return 'exit'
             if keyInput == ord('d'):
-                self.saveImg = img.copy()
-                if self.rectParas != []:
-                    self.rectParas.pop()
-                    self.DrawRectangles()
-                cv2.imshow(imgName,self.saveImg)
+                self.imgCurrent = self.img.copy()
+                if self.roiPointList:
+                    self.roiPointList.pop()
+                    self.maskList.pop()
+                    if self.maskList:
+                        self.DrawRoiList(self.roiPointList, self.maskList)
+                        cv2.imshow(self.state, self.imgCurrent)
+                    else:
+                        cv2.imshow(self.state, self.imgCurrent)
+                else:
+                    cv2.imshow(self.state, self.imgCurrent)
+                keyInput = None
+            if keyInput == 27:
+                flag = 'exit'
+                break
             if keyInput == ord(' '):
+                flag = 'next'
                 break
             if keyInput == ord('b'):
-                return 'back'
-        return self.rectParas
-
-
-        
+                flag = 'back'
+                break
+        def Roi2Rect(roiList):
+            rectList = list()
+            for roi in roiList:
+                rect = [roi[0], roi[1], roi[2]-roi[0]+1, roi[3]-roi[1]+1]
+                rectList.append(rect)
+            return rectList
+        self.rectList = Roi2Rect(self.roiPointList)
+        return self.rectList, self.maskList, flag
+            
     def VideoPicPick(self,cap,currentPos):
         """
         
@@ -162,7 +199,32 @@ class CFreeChoose:
                     cv2.circle(self.imgCurrent,(int((roiPoint[2]-roiPoint[0])/2+roiPoint[0]), int((roiPoint[3]-roiPoint[1])/2+roiPoint[1])),self.lineThickness,self.color_blue,-1)
                     cv2.rectangle(self.imgCurrent,(roiPoint[0],roiPoint[1]),(roiPoint[2],roiPoint[3]),self.color_blue,self.lineThickness)
 
+    def Save(self, rectList):
+        """
+        Save object, ground truth and whole image.
+        """
+        ###rectList maybe scaled by W/H, so need to reinput it
+        ###save whole image
+        imgPath = os.path.join(self.SavePathDict['imgPath'], self.imgName)
+        cv2.imwrite(imgPath, self.img)
+        txtPath = os.path.join(self.SavePathDict['txtPath'], os.path.splitext(self.imgName)[0]+'.txt')
+        fOut = open(txtPath,'a')
+        fOut.close()
+        fOut = open(txtPath,'w')
+        fOut.write('% bbGt version=3'+'\n')  
 
+        objNum = 1
+        for idx,mask in enumerate(self.maskList):
+            rect = rectList[idx]
+            ###save objects
+            if mask ==0:
+                objectImg = self.img[rect[1]:rect[1]+rect[3], rect[0]:rect[0]+rect[2]]
+                cv2.imwrite(os.path.join(self.SavePathDict['objPath'], os.path.splitext(self.imgName)[0]+'_'+str(objNum)+'.png'), objectImg)
+                objNum += 1
+            ###save labeled ground truth
+            fOut.write(('%s %d %d %d %d 0 0 0 0 0 %d 0\n') % (self.label,rect[0],rect[1],rect[2],rect[3],mask))
+        
+        fOut.close()
             
             
         
