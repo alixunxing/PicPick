@@ -225,8 +225,3 @@ class CFreeChoose:
             fOut.write(('%s %d %d %d %d 0 0 0 0 0 %d 0\n') % (self.label,rect[0],rect[1],rect[2],rect[3],mask))
         
         fOut.close()
-            
-            
-        
-            
-        

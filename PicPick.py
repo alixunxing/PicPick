@@ -101,30 +101,30 @@ class CPicPick:
                 print 'Unkown keyboard input -> ', returnFlag
                 assert False
 
-    def Save(self, img, imgName):
-        """
-        Save object, ground truth and whole image.
-        """
-        ###save whole image
-        cv2.imwrite(os.path.join(self.SavePathDict['imgPath'], imgName), img)
-        fOut = open(os.path.join(self.SavePathDict['txtPath'], os.path.splitext(imgName)[0]+'.txt'),'a')
-        fOut.close()
-        fOut = open(os.path.join(self.SavePathDict['txtPath'], os.path.splitext(imgName)[0]+'.txt'),'w')
-        fOut.write('% bbGt version=3'+'\n')
+    #def Save(self, img, imgName):
+    #    """
+    #    Save object, ground truth and whole image.
+    #    """
+    #    ###save whole image
+    #    cv2.imwrite(os.path.join(self.SavePathDict['imgPath'], imgName), img)
+    #    fOut = open(os.path.join(self.SavePathDict['txtPath'], os.path.splitext(imgName)[0]+'.txt'),'a')
+    #    fOut.close()
+    #    fOut = open(os.path.join(self.SavePathDict['txtPath'], os.path.splitext(imgName)[0]+'.txt'),'w')
+    #    fOut.write('% bbGt version=3'+'\n')
 
-        objNum = 1
-        for idx,mask in enumerate(self.maskList):
-            rect = self.rectList[idx]
-            ###save objects
-            if mask ==0:
-                objectImg = img[rect[1]:rect[1]+rect[3], rect[0]:rect[0]+rect[2]]
-                p = os.path.join(self.SavePathDict['objPath'], os.path.splitext(imgName)[0], '_', str(objNum), '.png')
-                cv2.imwrite(os.path.join(self.SavePathDict['objPath'], os.path.splitext(imgName)[0]+'_'+str(objNum)+'.png'), objectImg)
-                objNum += 1
-            ###save labeled ground truth
-            fOut.write(('%s %d %d %d %d 0 0 0 0 0 %d 0\n') % (self.label,rect[0],rect[1],rect[2],rect[3],mask))
+    #    objNum = 1
+    #    for idx,mask in enumerate(self.maskList):
+    #        rect = self.rectList[idx]
+    #        ###save objects
+    #        if mask ==0:
+    #            objectImg = img[rect[1]:rect[1]+rect[3], rect[0]:rect[0]+rect[2]]
+    #            p = os.path.join(self.SavePathDict['objPath'], os.path.splitext(imgName)[0], '_', str(objNum), '.png')
+    #            cv2.imwrite(os.path.join(self.SavePathDict['objPath'], os.path.splitext(imgName)[0]+'_'+str(objNum)+'.png'), objectImg)
+    #            objNum += 1
+    #        ###save labeled ground truth
+    #        fOut.write(('%s %d %d %d %d 0 0 0 0 0 %d 0\n') % (self.label,rect[0],rect[1],rect[2],rect[3],mask))
         
-        fOut.close()
+    #    fOut.close()
     
     #def Save(self, img, imgName):
     #    """
@@ -252,4 +252,3 @@ class CPicPick:
             if self.ScaleParamDict['IsNeedWHRatio'] == 1:
                 self.ScalebyWH()
             self.ObjectSaveFile()
-        
