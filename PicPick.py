@@ -66,9 +66,40 @@ class CPicPick:
             self.PictureRecursion(0, imgNameList)
             cv2.destroyAllWindows()
         elif self.srcFormat == 'video':
-            self.doMode.VideoPicPick()
+            cap = cv2.VideoCapture(self.videoSrc)
+            currentPos = 1
+
+            self.VideoRecursion(cap, currentPos)
+            cap.release()
+            cv2.destroyAllWindows()
         else:
             print 'Unkown source format!!!'
+            assert False
+
+    def VideoRecursion(self, cap, currentPos):
+        state = self.videoSrc + '    ' + str(currentPos) + '/' + str(len(imgNameList))
+        self.Create_Window(state)
+
+        self.rectList, self.maskList, returnFlag = self.doMode.VideoPicPick(cap, currentPos)
+        if returnFlag == 'exit':
+            cap.release()
+            cv2.destroyAllWindows()
+        elif returnFlag == 'back':
+            if idx>0:
+                self.PictureRecursion(idx-1, imgNameList)
+                cv2.destroyAllWindows()
+            else:
+                self.PictureRecursion(0, imgNameList)
+        elif returnFlag == 'next':
+            if self.rectList:
+                if self.ScaleParamDict['IsNeedWHRatio'] == 1:
+                    self.ScalebyWH()
+                assert len(self.rectList) == len(self.maskList)
+                self.doMode.Save(self.rectList)
+                self.Save(img, imgName)
+                cv2.destroyAllWindows()
+        else:
+            print 'Unkown keyboard input -> ', returnFlag
             assert False
 
     def PictureRecursion(self, startIdx, imgNameList):
