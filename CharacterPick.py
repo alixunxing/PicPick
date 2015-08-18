@@ -63,7 +63,6 @@ class CCharacterPick:
     ############################################################################################
     def __init__(self):
         self.startX = self.startY = -1
-        self.savePic = False
         self.endX = self.endY = -1
         self.width = self.height = 0
         self.isAppRect = False # Is a Rect appended into list right now?
@@ -92,7 +91,14 @@ class CCharacterPick:
     def InitVar(self):
         self.roiPointList  = list()
         self.maskList = list()
-         
+            
+    def VideoPicPick(self):
+        """
+        CharacterPick does not have VideoPicPick mode!!!
+        """
+        flag = 'exit'
+        return None, None, flag 
+                 
     def PicturePicPick(self):
         """
         Pick objects on pictures!!!

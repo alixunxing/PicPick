@@ -18,9 +18,7 @@ from Tool import CTool
 
 
 class CPicPick:
-    def __init__(self):
-        self.InitParameter()
-
+    @staticmethod
     def InitParameter(self):
         '''
         Init parameters...

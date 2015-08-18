@@ -12,7 +12,6 @@ import os
 class CFreeChoose:
     def __init__(self):
         self.startX = self.startY = -1
-        self.savePic = False
         self.endX = self.endY = -1
         self.width = self.height = 0
         self.isAppRect = False # Is a Rect appended into list right now?
