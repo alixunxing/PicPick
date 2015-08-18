@@ -46,9 +46,9 @@ class CPicPick:
         '''
         create window with window name and current state.
         '''
-        cv2.namedWindow(State,flags=0)
-        cv2.resizeWindow(State,self.VisualParamDict['resolutionWid'],self.VisualParamDict['resolutionHgt'])
-        cv2.moveWindow(State,50,50)
+        cv2.namedWindow(State, flags=0)
+        cv2.resizeWindow(State, self.VisualParamDict['resolutionWid'], self.VisualParamDict['resolutionHgt'])
+        cv2.moveWindow(State, 50, 50)
 
     def Create_Mode(self):
         '''
@@ -67,40 +67,49 @@ class CPicPick:
             cv2.destroyAllWindows()
         elif self.srcFormat == 'video':
             cap = cv2.VideoCapture(self.videoSrc)
-            currentPos = 1
-
-            self.VideoRecursion(cap, currentPos)
-            cap.release()
-            cv2.destroyAllWindows()
+            self.videoLength = cap.get(CV_CAP_PROP_FRAME_COUNT)
+            self.videoName = os.path.basename(self.videoSrc)
+            self.VideoRecursion(cap, 0)
         else:
             print 'Unkown source format!!!'
             assert False
 
     def VideoRecursion(self, cap, currentPos):
-        state = self.videoSrc + '    ' + str(currentPos) + '/' + str(len(imgNameList))
-        self.Create_Window(state)
-
-        self.rectList, self.maskList, returnFlag = self.doMode.VideoPicPick(cap, currentPos)
-        if returnFlag == 'exit':
+        cap.set(cv2.CAP_PROP_POS_FRAMES,currentPos)
+        ret, img = cap.read()
+        if ret:
+            state = self.videoSrc + '    ' + str(currentPos) + '/' + str(self.videoLength-1)
+            cv2.destroyAllWindows()
+            self.Create_Window(state)
+            imgName = os.path.splitext(self.videoName)[0] + '_' + str(currentPos) + '.png'
+            self.doMode.InputInfo(img, imgName, state, self.label, self.SavePathDict, self.VisualParamDict)
+            self.rectList, self.maskList, returnFlag = self.doMode.VideoPicPick(cap, currentPos)
+            if returnFlag == 'exit':
+                return
+            elif returnFlag == 'front':
+                if currentPos-self.videoJumpFrame>=0:
+                    self.VideoRecursion(cap, currentPos-self.videoJumpFrame)
+                else:
+                    self.VideoRecursion(cap, 0)
+            elif returnFlag == 'back':
+                if currentPos+self.videoJumpFrame<=self.videoLength-1:
+                    self.VideoRecursion(cap, currentPos+self.videoJumpFrame)
+                else:
+                    self.VideoRecursion(cap, self.videoJumpFrame-1)
+            elif returnFlag == 'next':
+                if self.rectList:
+                    if self.ScaleParamDict['IsNeedWHRatio'] == 1:
+                        self.ScalebyWH()
+                    assert len(self.rectList) == len(self.maskList)
+                    self.doMode.Save(self.rectList)
+                    cv2.destroyAllWindows()
+            else:
+                print 'Unkown keyboard input -> ', returnFlag
+                assert False
+        else:
             cap.release()
             cv2.destroyAllWindows()
-        elif returnFlag == 'back':
-            if idx>0:
-                self.PictureRecursion(idx-1, imgNameList)
-                cv2.destroyAllWindows()
-            else:
-                self.PictureRecursion(0, imgNameList)
-        elif returnFlag == 'next':
-            if self.rectList:
-                if self.ScaleParamDict['IsNeedWHRatio'] == 1:
-                    self.ScalebyWH()
-                assert len(self.rectList) == len(self.maskList)
-                self.doMode.Save(self.rectList)
-                self.Save(img, imgName)
-                cv2.destroyAllWindows()
-        else:
-            print 'Unkown keyboard input -> ', returnFlag
-            assert False
+            return
 
     def PictureRecursion(self, startIdx, imgNameList):
         for idx in range(startIdx, len(imgNameList)):
@@ -126,7 +135,6 @@ class CPicPick:
                         self.ScalebyWH()
                     assert len(self.rectList) == len(self.maskList)
                     self.doMode.Save(self.rectList)
-                    self.Save(img, imgName)
                     cv2.destroyAllWindows()
             else:
                 print 'Unkown keyboard input -> ', returnFlag

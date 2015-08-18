@@ -131,60 +131,51 @@ class CFreeChoose:
         self.rectList = Roi2Rect(self.roiPointList)
         return self.rectList, self.maskList, flag
             
-    def VideoPicPick(self,cap,currentPos):
+    def VideoPicPick(self):
         """
-        
+        Pick objects on video!!! 
+        VideoPicPick has 'front' operation while PicturePicPick doesn't.
         """
-        forwardFrameRate = 5
-        CV_CAP_PROP_POS_FRAMES = 1
-        CV_CAP_PROP_FRAME_COUNT = 7
-        cv2.setMouseCallback('image',self.DrawRectangle)
-        cap.set(CV_CAP_PROP_POS_FRAMES,currentPos-1)
-        self.rectParas = []
-        ret,img = cap.read()
-        while ret == True:
-            saveImg = img.copy()
-            self.saveImg = img.copy()
-            cv2.imshow('image',img)
+        self.InitVar()
+        self.imgCurrent = self.img.copy()
+        cv2.imshow(self.state, self.imgCurrent)
+
+        cv2.setMouseCallback(self.state, self.OnMouse)
+        while True:
             keyInput = cv2.waitKey(0)
-            if keyInput == ord(' '):
-                ret,img = cap.read()
-            if keyInput == ord('f'):
-                if cap.get(CV_CAP_PROP_POS_FRAMES)+forwardFrameRate>cap.get(CV_CAP_PROP_FRAME_COUNT):
-                    return [],[],0
-                for i in range(5):
-                    ret,img = cap.read()
-            if keyInput == ord('b'):
-                currentPos = cap.get(CV_CAP_PROP_POS_FRAMES)
-                cap.set(CV_CAP_PROP_POS_FRAMES,currentPos-forwardFrameRate -1)
-                ret,img = cap.read()
-            if keyInput == 27:
-                return [],[],0
             if keyInput == ord('d'):
-                self.saveImg = img.copy()
-                if self.rectParas != []:
-                    self.rectParas.pop()
-                    self.DrawRectangles()
-                cv2.imshow('image',self.saveImg)
-                while 1:
-                    if self.rectParas == []:
-                        break
-                    keyInput = cv2.waitKey(0)
-                    if keyInput != ord('d') and keyInput != ord(' '):
-                        cv2.imshow('image',self.saveImg)
-                    if keyInput == ord('d'):
-                        self.saveImg = img.copy()
-                        if self.rectParas != []:
-                            self.rectParas.pop()
-                            self.DrawRectangles()
-                        cv2.imshow('image',self.saveImg)                       
-                    if keyInput == ord(' '):
-                        ret,img = cap.read()
-                        break
-            if self.rectParas != []:
-                return saveImg,self.rectParas,cap.get(CV_CAP_PROP_POS_FRAMES)
-            if cap.get(CV_CAP_PROP_POS_FRAMES)+1 > cap.get(CV_CAP_PROP_FRAME_COUNT):
-                return [],[],0
+                self.imgCurrent = self.img.copy()
+                if self.roiPointList:
+                    self.roiPointList.pop()
+                    self.maskList.pop()
+                    if self.maskList:
+                        self.DrawRoiList(self.roiPointList, self.maskList)
+                        cv2.imshow(self.state, self.imgCurrent)
+                    else:
+                        cv2.imshow(self.state, self.imgCurrent)
+                else:
+                    cv2.imshow(self.state, self.imgCurrent)
+                keyInput = None
+            if keyInput == 27:
+                flag = 'exit'
+                break
+            if keyInput == ord(' '):
+                flag = 'next'
+                break
+            if keyInput == ord('b'):
+                flag = 'back'
+                break
+            if keyInput == ord('f'):
+                flag = 'front'
+                break
+        def Roi2Rect(roiList):
+            rectList = list()
+            for roi in roiList:
+                rect = [roi[0], roi[1], roi[2]-roi[0]+1, roi[3]-roi[1]+1]
+                rectList.append(rect)
+            return rectList
+        self.rectList = Roi2Rect(self.roiPointList)
+        return self.rectList, self.maskList, flag
                 
     def DrawRoiList(self, roiPointList = list(), maskList = list()):
         """
