@@ -82,6 +82,7 @@ class CPicPick:
             self.doMode.InputInfo(img, imgName, state, self.label, self.SavePathDict, self.VisualParamDict)
             self.rectList, self.maskList, returnFlag = self.doMode.VideoPicPick()
             if returnFlag == 'exit':
+                cap.release()
                 cv2.destroyAllWindows()
                 return
             elif returnFlag == 'front':

@@ -2,6 +2,7 @@
 @Create: 2015/7/8
 @author: Tang Yu-Jia
 """
+import os
 import cv2
 
 class CPreChooseSingleObject:
