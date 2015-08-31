@@ -53,12 +53,13 @@ class CPreChooseSingleObject:
         elif event == cv2.EVENT_RBUTTONUP:
             if self.isAppRect and self.startX != self.endX and self.startY !=self.endY:
                 ###### if drawing started from the right-bottom, swap(startPoint, endPoint)
-                self.InitVar()
                 if self.startX > self.endX:
                     self.startX, self.endX = self.endX, self.startX
                     self.startY, self.endY = self.endY, self.startY
-                self.roiPointList.append([self.startX, self.startY, self.endX, self.endY])
-                self.maskList.append(0)
+                self.roiPointList = [self.startX, self.startY, self.endX, self.endY]
+                self.maskList = 0
+                self.width = self.endX - self.startX
+                self.height = self.endY - self.startY
                 self.isAppRect = False
         if event == cv2.EVENT_LBUTTONDOWN:
             self.InitVar()
