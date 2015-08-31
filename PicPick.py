@@ -4,10 +4,10 @@
 @author: Tang Yu-Jia
 """
 from __future__ import division
-import linecache
 import os
-import glob
 import cv2
+import glob
+import linecache
 import xml.etree.cElementTree as xmlParser
 from PreChooseSingleObject import CPreChooseSingleObject
 from FreeChoose import CFreeChoose
@@ -18,7 +18,6 @@ from Tool import CTool
 
 
 class CPicPick:
-    @staticmethod
     def InitParameter(self):
         '''
         Init parameters...
@@ -65,7 +64,7 @@ class CPicPick:
             cv2.destroyAllWindows()
         elif self.srcFormat == 'video':
             cap = cv2.VideoCapture(self.videoSrc)
-            self.videoLength = cap.get(CV_CAP_PROP_FRAME_COUNT)
+            self.videoLength = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
             self.videoName = os.path.basename(self.videoSrc)
             self.VideoRecursion(cap, 0)
         else:
@@ -73,34 +72,35 @@ class CPicPick:
             assert False
 
     def VideoRecursion(self, cap, currentPos):
-        cap.set(cv2.CAP_PROP_POS_FRAMES,currentPos)
+        cap.set(cv2.CAP_PROP_POS_FRAMES, currentPos)
         ret, img = cap.read()
         if ret:
-            state = self.videoSrc + '    ' + str(currentPos) + '/' + str(self.videoLength-1)
+            state = self.videoSrc + '    ' + str(currentPos) + '/' + str(self.videoLength)
             cv2.destroyAllWindows()
             self.Create_Window(state)
             imgName = os.path.splitext(self.videoName)[0] + '_' + str(currentPos) + '.png'
             self.doMode.InputInfo(img, imgName, state, self.label, self.SavePathDict, self.VisualParamDict)
-            self.rectList, self.maskList, returnFlag = self.doMode.VideoPicPick(cap, currentPos)
+            self.rectList, self.maskList, returnFlag = self.doMode.VideoPicPick()
             if returnFlag == 'exit':
+                cv2.destroyAllWindows()
                 return
             elif returnFlag == 'front':
-                if currentPos-self.videoJumpFrame>=0:
-                    self.VideoRecursion(cap, currentPos-self.videoJumpFrame)
-                else:
-                    self.VideoRecursion(cap, 0)
-            elif returnFlag == 'back':
                 if currentPos+self.videoJumpFrame<=self.videoLength-1:
                     self.VideoRecursion(cap, currentPos+self.videoJumpFrame)
                 else:
                     self.VideoRecursion(cap, self.videoJumpFrame-1)
+            elif returnFlag == 'back':
+                if currentPos-self.videoJumpFrame>=0:
+                    self.VideoRecursion(cap, currentPos-self.videoJumpFrame)
+                else:
+                    self.VideoRecursion(cap, 0)
             elif returnFlag == 'next':
                 if self.rectList:
                     if self.ScaleParamDict['IsNeedWHRatio'] == 1:
                         self.ScalebyWH()
                     assert len(self.rectList) == len(self.maskList)
                     self.doMode.Save(self.rectList)
-                    cv2.destroyAllWindows()
+                self.VideoRecursion(cap, currentPos+1)
             else:
                 print 'Unkown keyboard input -> ', returnFlag
                 assert False

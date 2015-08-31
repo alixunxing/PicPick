@@ -5,6 +5,6 @@
 from PicPick import CPicPick
 
 if __name__ == '__main__':
-    CPicPick.InitParameter()
     doPicPick = CPicPick()
+    doPicPick.InitParameter()
     doPicPick.PicPick()

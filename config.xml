@@ -9,7 +9,7 @@
         4.FreeChoose
         5.CharacterPick
         -->
-	    <SrcFormat>picture</SrcFormat>
+	    <SrcFormat>video</SrcFormat>
 	    <!--SrcFormat:1.picture 2.video-->
       <Label>char</Label>
       <Scale_Parameters>
@@ -29,7 +29,7 @@
   
   <Video_Parameters>
       <VideoJumpFrame frame="25"/>
-      <VideoSrc>E:\ShipVideo\192.168.20.58_01_20141216150608986.avi</VideoSrc>
+      <VideoSrc>E:\1.avi</VideoSrc>
   </Video_Parameters>
 
   <Picture_Parameters>
