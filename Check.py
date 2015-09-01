@@ -7,27 +7,23 @@ import cv2
 import linecache
 
 class CCheck:
-    def __init__(self):        
-        self.rectParas = []
+    def __init__(self, CheckPathDict):
+        self.CheckPathDict = CheckPathDict
         self.picModel = False
         self.saveImg = None
         self.copyImg = None
         self.saveRect = False
-        #self.command = None
         
-        self.label = linecache.getline('Setting.txt',16)[:-1]        
-        if self.label == 'pedestrian':
-            self.forPedestrian = True
-            self.thickness = 1
-        if self.label == 'train_hook':
-            self.forPedestrian = False
-            self.thickness = 2
+    def InputInfo(self, imgName, txtName):
+        self.imgName = imgName
+        self.txtName = txtName
 
+    def Check(self):
+        pass
         
-    def DrawOrDelRectangle(self,event,x,y,flags,param):
+    def OnMouse(self, event, x, y, flags, param):
         """
-        功能：鼠标响应处理函数
-        画图模式：响应鼠标左键按下，左键拖拽响应鼠标左键按下，左键拖拽，左键松开，右键按下，右键拖拽，右键松开。
+        drawing：FreeChoose
         删除模式：响应鼠标左键按下。
         """
         if self.picModel == True:
@@ -39,8 +35,7 @@ class CCheck:
                 self.copyImg = self.saveImg.copy()
                 self.endX = x
                 self.endY = y
-                cv2.circle(self.copyImg,((self.endX-self.startX)/2+\
-                self.startX,(self.endY-self.startY)/2+self.startY),self.thickness,(0,255,0),-1)
+                cv2.circle(self.copyImg,((self.endX-self.startX)/2+self.startX,(self.endY-self.startY)/2+self.startY),self.thickness,(0,255,0),-1)
                 cv2.rectangle(self.copyImg,(self.startX,self.startY),(self.endX,self.endY),(0,255,0),self.thickness)
                 cv2.imshow(self.imgName,self.copyImg)                
             elif event == cv2.EVENT_LBUTTONUP:
@@ -55,8 +50,7 @@ class CCheck:
                 self.copyImg = self.saveImg.copy()
                 self.endX = x
                 self.endY = y
-                cv2.circle(self.copyImg,((self.endX-self.startX)/2+\
-                self.startX,(self.endY-self.startY)/2+self.startY),self.thickness,(255,0,0),-1)
+                cv2.circle(self.copyImg,((self.endX-self.startX)/2+self.startX,(self.endY-self.startY)/2+self.startY),self.thickness,(255,0,0),-1)
                 cv2.rectangle(self.copyImg,(self.startX,self.startY),(self.endX,self.endY),(255,0,0),self.thickness)
                 cv2.imshow(self.imgName,self.copyImg)
             elif event == cv2.EVENT_RBUTTONUP:
@@ -70,10 +64,8 @@ class CCheck:
                     endX = rectPara[2]
                     endY = rectPara[3]
                     if startX<=x<=endX and startY<=y<=endY:
-                        cv2.circle(self.saveImg,(startX+(endX-startX)/2,startY+\
-                        (endY-startY)/2),self.thickness,(0,0,255),-1)
-                        cv2.rectangle(self.saveImg,(startX,startY),(endX,endY),\
-                        (0,0,255),self.thickness)
+                        cv2.circle(self.saveImg,(startX+(endX-startX)/2,startY+(endY-startY)/2),self.thickness,(0,0,255),-1)
+                        cv2.rectangle(self.saveImg,(startX,startY),(endX,endY),(0,0,255),self.thickness)
                         self.rectParas.remove(rectPara)
                 cv2.imshow(self.imgName,self.saveImg)
                     

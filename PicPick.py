@@ -59,6 +59,10 @@ class CPicPick:
         assert len(imgNameList) == len(txtNameList)
         imgNameList.sort()
         txtNameList.sort()
+        doCheck = CCheck(self.CheckPathDict)
+        for i in range(len(imgNameList)):
+            doCheck.InputInfo(imgNameList[i], txtNameList[i])
+            doCheck.Check()
 
     def PicPick(self):
         self.doMode = self.Create_Mode()
