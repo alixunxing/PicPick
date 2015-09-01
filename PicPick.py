@@ -58,7 +58,7 @@ class CPicPick:
         self.doMode = self.Create_Mode()
 
         if self.srcFormat == 'picture':
-            imgNameList = glob.glob(os.path.join(self.pictureSrc, '*.bmp')) + glob.glob(os.path.join(self.pictureSrc, '*.png'))
+            imgNameList = glob.glob(os.path.join(self.pictureSrc, '*.bmp')) + glob.glob(os.path.join(self.pictureSrc, '*.png')) + glob.glob(os.path.join(self.pictureSrc, '*.jpg'))
             assert imgNameList
             self.PictureRecursion(0, imgNameList)
             cv2.destroyAllWindows()
