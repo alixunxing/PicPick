@@ -100,10 +100,9 @@ class CTool:
 
         def CheckPathReader():
             CheckPath     = root.find('CheckPath').text
-            objPath       = os.path.join(CheckPath, 'obj')
             imgPath       = os.path.join(CheckPath, 'pos')
             txtPath       = os.path.join(CheckPath, 'posGt')
-            CheckPathDict = {'objPath':objPath, 'imgPath':imgPath, 'txtPath':txtPath}
+            CheckPathDict = {'imgPath':imgPath, 'txtPath':txtPath}
             return CheckPathDict
 
         return GeneralParamReader(), VideoParamReader(), PictureParamReader(), SavePathReader(), CheckPathReader()

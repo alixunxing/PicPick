@@ -3,10 +3,10 @@
 @author: Tang Yu-Jia
 """
 from __future__ import division
-import cv2
-import numpy as np
-import math
 import os
+import cv2
+import math
+import numpy as np
 
 
 class CFreeChoose:

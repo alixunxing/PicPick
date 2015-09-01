@@ -6,7 +6,6 @@
 import cv2
 import linecache
 
-
 class CCheck:
     def __init__(self):        
         self.rectParas = []
@@ -118,13 +117,9 @@ class CCheck:
             endY = rectPara[3]
             mask = rectPara[4]
             if mask == 0:
-                cv2.circle(self.saveImg,(startX+(endX-startX)/2,startY+\
-                (endY-startY)/2),self.thickness,(0,255,0),-1)
-                cv2.rectangle(self.saveImg,(startX,startY),(endX,endY),\
-                (0,255,0),self.thickness)
+                cv2.circle(self.saveImg,(startX+(endX-startX)/2,startY + (endY-startY)/2),self.thickness,(0,255,0),-1)
+                cv2.rectangle(self.saveImg,(startX,startY),(endX,endY), (0,255,0),self.thickness)
             if mask == 1:
-                cv2.circle(self.saveImg,(startX+(endX-startX)/2,startY+\
-                (endY-startY)/2),self.thickness,(255,0,0),-1)
-                cv2.rectangle(self.saveImg,(startX,startY),(endX,endY),\
-                (255,0,0),self.thickness)
+                cv2.circle(self.saveImg,(startX+(endX-startX)/2,startY+ (endY-startY)/2),self.thickness,(255,0,0),-1)
+                cv2.rectangle(self.saveImg,(startX,startY),(endX,endY), (255,0,0),self.thickness)
         

@@ -1,4 +1,3 @@
-# -*- coding: cp936 -*-
 """
 @Create: 2015/7/8
 @author: Tang Yu-Jia
@@ -9,12 +8,12 @@ import cv2
 import glob
 import linecache
 import xml.etree.cElementTree as xmlParser
-from PreChooseSingleObject import CPreChooseSingleObject
-from FreeChoose import CFreeChoose
-from PreChooseMultiObject import CPreChooseMultiObject
-from Check import CCheck
-from CharacterPick import CCharacterPick
 from Tool import CTool
+from Check import CCheck
+from FreeChoose import CFreeChoose
+from CharacterPick import CCharacterPick
+from PreChooseMultiObject import CPreChooseMultiObject
+from PreChooseSingleObject import CPreChooseSingleObject
 
 
 class CPicPick:
@@ -51,9 +50,16 @@ class CPicPick:
         '''
         return mode object
         '''
-        ModeFactory = {'PreChooseSingleObject':CPreChooseSingleObject(),'FreeChoose':CFreeChoose(),'CharacterPick':CCharacterPick(),'PreChooseMultiObject':CPreChooseMultiObject(),'Check':CCheck()}
+        ModeFactory = {'PreChooseSingleObject':CPreChooseSingleObject(), 'FreeChoose':CFreeChoose(), 'CharacterPick':CCharacterPick(), 'PreChooseMultiObject':CPreChooseMultiObject()}
         return ModeFactory[self.mode]
-        
+
+    def Check(self):
+        imgNameList = glob.glob(os.path.join(self.CheckPathDict['imgPath'], '*.bmp')) + glob.glob(os.path.join(self.CheckPathDict['imgPath'], '*.png')) + glob.glob(os.path.join(self.CheckPathDict['imgPath'], '*.jpg'))
+        txtNameList = glob.glob(os.path.join(self.CheckPathDict['txtPath'], '*.txt'))
+        assert len(imgNameList) == len(txtNameList)
+        imgNameList.sort()
+        txtNameList.sort()
+
     def PicPick(self):
         self.doMode = self.Create_Mode()
 
