@@ -52,12 +52,13 @@ class CPreChooseSingleObject:
             cv2.imshow(self.state, self.imgTmp)
         elif event == cv2.EVENT_RBUTTONUP:
             if self.isAppRect and self.startX != self.endX and self.startY !=self.endY:
+                self.InitVar()
                 ###### if drawing started from the right-bottom, swap(startPoint, endPoint)
                 if self.startX > self.endX:
                     self.startX, self.endX = self.endX, self.startX
                     self.startY, self.endY = self.endY, self.startY
-                self.roiPointList = [self.startX, self.startY, self.endX, self.endY]
-                self.maskList = 0
+                self.roiPointList.append([self.startX, self.startY, self.endX, self.endY])
+                self.maskList.append(0)
                 self.width = self.endX - self.startX
                 self.height = self.endY - self.startY
                 self.isAppRect = False
@@ -71,7 +72,11 @@ class CPreChooseSingleObject:
             cv2.circle(self.imgCurrent, (x, y), self.lineThickness, self.color_green, -1)
             cv2.rectangle(self.imgCurrent, (self.startX, self.startY), (self.endX, self.endY), self.color_green, self.lineThickness)
             cv2.imshow(self.state, self.imgCurrent)
-
+        elif event == cv2.EVENT_LBUTTONUP:
+            if self.startX != self.endX and self.startY !=self.endY:
+                self.roiPointList.append([self.startX, self.startY, self.endX, self.endY])
+                self.maskList.append(0)
+                
     def PicturePicPick(self):
         """
         Pick objects on pictures!!!
