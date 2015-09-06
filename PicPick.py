@@ -9,7 +9,8 @@ import glob
 import linecache
 import xml.etree.cElementTree as xmlParser
 from Tool import CTool
-from Check import CCheck
+from CheckGt import CCheckGt
+from CheckDt import CCheckDt
 from FreeChoose import CFreeChoose
 from CharacterPick import CCharacterPick
 from PreChooseMultiObject import CPreChooseMultiObject
@@ -59,10 +60,10 @@ class CPicPick:
         assert len(imgNameList) == len(txtNameList)
         imgNameList.sort()
         txtNameList.sort()
-        doCheck = CCheck(self.CheckPathDict)
+        doWork = CCheckGt(self.CheckPathDict)
         for i in range(len(imgNameList)):
-            doCheck.InputInfo(imgNameList[i], txtNameList[i])
-            doCheck.Check()
+            doWork.InputInfo(imgNameList[i], txtNameList[i])
+            doWork.Check()
 
     def PicPick(self):
         self.doMode = self.Create_Mode()
