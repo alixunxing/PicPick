@@ -25,7 +25,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CharacterPick.py" />
-    <Compile Include="Check.py" />
+    <Compile Include="CheckDt.py" />
+    <Compile Include="CheckGt.py" />
     <Compile Include="FreeChoose.py" />
     <Compile Include="main.py" />
     <Compile Include="PicPick.py" />
