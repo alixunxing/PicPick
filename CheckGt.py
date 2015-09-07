@@ -31,10 +31,17 @@ class CCheckGt:
         self.state = state
         self.lineThickness = VisualParamDict['LineThickness']
 
+    def InitVar(self):
+        self.roiPointList  = list()
+        self.maskList = list()
+
     def Check(self):
         self.img = cv2.imread(self.imgName)
         with open(self.txtName, 'r') as fin:
             lines = fin.readlines()
+
+        self.LinesToRoi(lines)
+        self.DrawRoiList(self.roiPointList, self.maskList)
 
         cv2.setMouseCallback(self.state, self.OnMouse)
         while True:
@@ -69,6 +76,13 @@ class CCheckGt:
             return rectList
         self.rectList = Roi2Rect(self.roiPointList)
         return self.rectList, self.maskList, flag
+
+    def LinesToRoiList(self, lines):
+        for line in lines:
+            self.label = line[0]
+            self.roiPointList.append([int(line[1]), int(line[2]), int(line[3]), int(line[4])])
+            self.maskList.append(int(line[-2]))
+
         
     def OnMouse(self, event, x, y, flags, param):
         """
