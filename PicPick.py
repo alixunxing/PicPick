@@ -60,13 +60,37 @@ class CPicPick:
         assert len(imgNameList) == len(txtNameList)
         imgNameList.sort()
         txtNameList.sort()
-        doWork = CCheckGt(self.CheckPathDict)
-        for i in range(len(imgNameList)):
-            doWork.InputInfo(imgNameList[i], txtNameList[i])
-            doWork.Check()
+        self.doCheck = CCheckGt(self.CheckPathDict)
+        self.CheckRecursion(0, imgNameList, txtNameList)
+
+    def CheckRecursion(self, startIdx, imgNameList, txtNameList):
+        for idx in range(len(imgNameList)):
+            assert os.path.splitext(imgNameList[idx])[0] == os.path.splitext(txtNameList[idx])[0]
+            state = imgNameList[idx] + '    ' + str(idx+1) + '/' + str(len(imgNameList))
+            self.doCheck.InputInfo(imgNameList[idx], txtNameList[idx], state, self.VisualParamDict)
+            self.doCheck.Check()
+            if returnFlag == 'exit':
+                cv2.destroyAllWindows()
+                break
+            elif returnFlag == 'back':
+                if idx>0:
+                    self.CheckRecursion(idx-1, imgNameList, txtNameList)
+                    cv2.destroyAllWindows()
+                else:
+                    self.CheckRecursion(0, imgNameList, txtNameList)
+            elif returnFlag == 'next':
+                if self.rectList:
+                    if self.ScaleParamDict['IsNeedWHRatio'] == 1:
+                        self.ScalebyWH()
+                    assert len(self.rectList) == len(self.maskList)
+                    self.doCheck.Save(self.rectList)
+                    cv2.destroyAllWindows()
+            else:
+                print 'Unkown keyboard input -> ', returnFlag
+                assert False
 
     def PicPick(self):
-        self.doMode = self.Create_Mode()
+        self.doPicPick = self.Create_Mode()
 
         if self.srcFormat == 'picture':
             imgNameList = glob.glob(os.path.join(self.pictureSrc, '*.bmp')) + glob.glob(os.path.join(self.pictureSrc, '*.png')) + glob.glob(os.path.join(self.pictureSrc, '*.jpg'))
@@ -90,8 +114,8 @@ class CPicPick:
             cv2.destroyAllWindows()
             self.Create_Window(state)
             imgName = os.path.splitext(self.videoName)[0] + '_' + str(currentPos) + '.png'
-            self.doMode.InputInfo(img, imgName, state, self.label, self.SavePathDict, self.VisualParamDict)
-            self.rectList, self.maskList, returnFlag = self.doMode.VideoPicPick()
+            self.doPicPick.InputInfo(img, imgName, state, self.label, self.SavePathDict, self.VisualParamDict)
+            self.rectList, self.maskList, returnFlag = self.doPicPick.VideoPicPick()
             if returnFlag == 'exit':
                 cap.release()
                 cv2.destroyAllWindows()
@@ -111,7 +135,7 @@ class CPicPick:
                     if self.ScaleParamDict['IsNeedWHRatio'] == 1:
                         self.ScalebyWH()
                     assert len(self.rectList) == len(self.maskList)
-                    self.doMode.Save(self.rectList)
+                    self.doPicPick.Save(self.rectList)
                 self.VideoRecursion(cap, currentPos+1)
             else:
                 print 'Unkown keyboard input -> ', returnFlag
@@ -128,8 +152,8 @@ class CPicPick:
             imgName = os.path.basename(imgNameList[idx])
             img = cv2.imread(os.path.join(self.pictureSrc, imgName))
 
-            self.doMode.InputInfo(img, imgName, state, self.label, self.SavePathDict, self.VisualParamDict)
-            self.rectList, self.maskList, returnFlag = self.doMode.PicturePicPick()
+            self.doPicPick.InputInfo(img, imgName, state, self.label, self.SavePathDict, self.VisualParamDict)
+            self.rectList, self.maskList, returnFlag = self.doPicPick.PicturePicPick()
             if returnFlag == 'exit':
                 cv2.destroyAllWindows()
                 break
@@ -144,7 +168,7 @@ class CPicPick:
                     if self.ScaleParamDict['IsNeedWHRatio'] == 1:
                         self.ScalebyWH()
                     assert len(self.rectList) == len(self.maskList)
-                    self.doMode.Save(self.rectList)
+                    self.doPicPick.Save(self.rectList)
                     cv2.destroyAllWindows()
             else:
                 print 'Unkown keyboard input -> ', returnFlag

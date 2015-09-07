@@ -35,7 +35,7 @@ class CFreeChoose:
         self.SavePathDict = SavePathDict
         self.lineThickness = VisualParamDict['LineThickness']
         
-    def OnMouse(self,event,x,y,flags,param):
+    def OnMouse(self, event, x, y, flags, param):
         """
         drag mouse: LButton to draw object, RButton to draw mask
         """
