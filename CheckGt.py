@@ -18,6 +18,7 @@ class CCheckGt:
         self.maskList = list() # len(mask) == len(roiPointList)
         self.color_blue  = (255, 0, 0)
         self.color_green = (0, 255, 0)
+        self.color_red   = (0, 0, 255)
         self.roiPointList = list()
         self.maskList = list()
         self.img = None
@@ -40,7 +41,7 @@ class CCheckGt:
         with open(self.txtName, 'r') as fin:
             lines = fin.readlines()
 
-        self.LinesToRoi(lines)
+        self.LinesToRoiList(lines)
         self.DrawRoiList(self.roiPointList, self.maskList)
 
         cv2.setMouseCallback(self.state, self.OnMouse)
@@ -78,11 +79,11 @@ class CCheckGt:
         return self.rectList, self.maskList, flag
 
     def LinesToRoiList(self, lines):
+        self.InitVar()
         for line in lines:
             self.label = line[0]
-            self.roiPointList.append([int(line[1]), int(line[2]), int(line[3]), int(line[4])])
+            self.roiPointList.append([int(line[1]), int(line[2]), int(line[1])+int(line[3]), int(line[2])+int(line[4])])
             self.maskList.append(int(line[-2]))
-
         
     def OnMouse(self, event, x, y, flags, param):
         """
