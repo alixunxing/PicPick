@@ -66,6 +66,7 @@ class CPicPick:
         for idx in range(len(imgNameList)):
             assert os.path.splitext(os.path.basename(imgNameList[idx]))[0] == os.path.splitext(os.path.basename(txtNameList[idx]))[0]
             state = imgNameList[idx] + '    ' + str(idx+1) + '/' + str(len(imgNameList))
+            self.Create_Window(state)
             self.doCheck.InputInfo(imgNameList[idx], txtNameList[idx], state, self.VisualParamDict)
             self.rectList, self.maskList, returnFlag = self.doCheck.Check()
             if returnFlag == 'exit':
