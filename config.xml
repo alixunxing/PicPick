@@ -1,7 +1,7 @@
 <?xml version="1.0" ?>
 <Parameter>
   <General_Parameters>
-    	<Mode>CharacterPick</Mode>
+    	<Mode>Check</Mode>
 	    <!--Mode:
         1.Check
         2.PreChooseSingleObject

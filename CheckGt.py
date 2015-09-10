@@ -25,12 +25,12 @@ class CCheckGt:
         self.maskList = list()
         self.img = None
    
-    def InputInfo(self, img, imgName, state, VisualParamDict):
+    def InputInfo(self, imgName, txtName, state, VisualParamDict):
         '''
         the 'clean' image without any drawing and the image title(a.k. the state) is inputted by this function
         '''
-        self.img = img
         self.imgName = imgName
+        self.txtName = txtName
         self.state = state
         self.lineThickness = VisualParamDict['LineThickness']
 
@@ -43,6 +43,7 @@ class CCheckGt:
         self.imgCurrent = self.img.copy()
         with open(self.txtName, 'r') as fin:
             lines = fin.readlines()
+            assert lines
 
         self.LinesToRoiList(lines)
         self.DrawRoiList(self.roiPointList, self.maskList)
@@ -54,19 +55,19 @@ class CCheckGt:
             if keyInput == ord('d'):
                 self.isDelete = True
                 self.isChoose = False
-                self.imgCurrent = self.img.copy()
-                if self.roiPointList:
-                    self.roiPointList.pop()
-                    self.maskList.pop()
-                    if self.maskList:
-                        self.DrawRoiList(self.roiPointList, self.maskList)
-                        cv2.imshow(self.state, self.imgCurrent)
-                    else:
-                        cv2.imshow(self.state, self.imgCurrent)
-                else:
-                    cv2.imshow(self.state, self.imgCurrent)
-                keyInput = None
-            if keyInput == 9:
+                #self.imgCurrent = self.img.copy()
+                #if self.roiPointList:
+                #    self.roiPointList.pop()
+                #    self.maskList.pop()
+                #    if self.maskList:
+                #        self.DrawRoiList(self.roiPointList, self.maskList)
+                #        cv2.imshow(self.state, self.imgCurrent)
+                #    else:
+                #        cv2.imshow(self.state, self.imgCurrent)
+                #else:
+                #    cv2.imshow(self.state, self.imgCurrent)
+                #keyInput = None
+            if keyInput == 9: # Tab
                 self.isDelete = False
                 self.isChoose = True
             if keyInput == 27:
@@ -89,7 +90,8 @@ class CCheckGt:
 
     def LinesToRoiList(self, lines):
         self.InitVar()
-        for line in lines:
+        for line in lines[1:]:
+            line = line.split()
             self.label = line[0]
             self.roiPointList.append([int(line[1]), int(line[2]), int(line[1])+int(line[3]), int(line[2])+int(line[4])])
             self.maskList.append(int(line[-2]))
@@ -146,7 +148,7 @@ class CCheckGt:
                     self.maskList.append(1)
                     self.isAppRect = False
                     self.isChoose = False
-        elif isDelete:
+        elif self.isDelete:
             if event == cv2.EVENT_LBUTTONDOWN:
                 for i, roi in enumerate(self.roiPointList):
                     startX = roi[0]
@@ -154,13 +156,14 @@ class CCheckGt:
                     endX = roi[2]
                     endY = roi[3]
                     if startX<=x<=endX and startY<=y<=endY:
-                        cv2.circle(self.saveImg, (startX+(endX-startX)/2, startY+(endY-startY)/2), self.lineThickness, self.color_red, -1)
-                        cv2.rectangle(self.saveImg, (startX,startY), (endX,endY), self.color_red, self.lineThickness)
-                        self.roiPointList.remove(roi)
+                        cv2.circle(self.imgCurrent, (startX+(endX-startX)/2, startY+(endY-startY)/2), self.lineThickness, self.color_red, -1)
+                        cv2.rectangle(self.imgCurrent, (startX,startY), (endX,endY), self.color_red, self.lineThickness)
+                        self.roiPointList.pop(i)
                         self.maskList.pop(i)
                         cv2.imshow(self.state, self.imgCurrent)
             elif event == cv2.EVENT_LBUTTONUP:
                 self.isDelete = False
+                self.imgCurrent = self.img.copy()
                 self.DrawRoiList(self.roiPointList, self.maskList)
                 cv2.imshow(self.state, self.imgCurrent)
            
@@ -189,10 +192,10 @@ class CCheckGt:
         fOut = open(txtPath,'a')
         fOut.close()
         fOut = open(txtPath,'w')
-        fOut.write('% bbGt version=3'+'\n')  
+        fOut.write('% bbGt version=3'+'\n')
 
         objNum = 1
-        for idx,mask in enumerate(self.maskList):
+        for idx, mask in enumerate(self.maskList):
             rect = rectList[idx]
             ###save objects
             if mask ==0:

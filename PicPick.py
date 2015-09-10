@@ -65,10 +65,10 @@ class CPicPick:
 
     def CheckRecursion(self, startIdx, imgNameList, txtNameList):
         for idx in range(len(imgNameList)):
-            assert os.path.splitext(imgNameList[idx])[0] == os.path.splitext(txtNameList[idx])[0]
+            assert os.path.splitext(os.path.basename(imgNameList[idx]))[0] == os.path.splitext(os.path.basename(txtNameList[idx]))[0]
             state = imgNameList[idx] + '    ' + str(idx+1) + '/' + str(len(imgNameList))
             self.doCheck.InputInfo(imgNameList[idx], txtNameList[idx], state, self.VisualParamDict)
-            self.doCheck.Check()
+            self.rectList, self.maskList, returnFlag = self.doCheck.Check()
             if returnFlag == 'exit':
                 cv2.destroyAllWindows()
                 break
