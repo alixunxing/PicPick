@@ -6,7 +6,6 @@ from __future__ import division
 import os
 import cv2
 import glob
-import linecache
 import xml.etree.cElementTree as xmlParser
 from Tool import CTool
 from CheckGt import CCheckGt

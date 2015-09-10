@@ -1,15 +1,12 @@
-# -*- coding: cp936 -*-
 """
 @Create: 2015/7/8
 @author: Tang Yu-Jia
 """
 import cv2
-import linecache
 
 class CCheckGt:
     def __init__(self, CheckPathDict):
         self.CheckPathDict = CheckPathDict
-        self.picModel = False
         self.startX = self.startY = -1
         self.endX = self.endY = -1
         self.width = self.height = 0
@@ -23,7 +20,6 @@ class CCheckGt:
         self.color_red   = (0, 0, 255)
         self.roiPointList = list()
         self.maskList = list()
-        self.img = None
    
     def InputInfo(self, imgName, txtName, state, VisualParamDict):
         '''
@@ -52,22 +48,10 @@ class CCheckGt:
         cv2.setMouseCallback(self.state, self.OnMouse)
         while True:
             keyInput = cv2.waitKey(0)
-            if keyInput == ord('d'):
+            if keyInput == ord('d'): # Delete mode
                 self.isDelete = True
                 self.isChoose = False
-                #self.imgCurrent = self.img.copy()
-                #if self.roiPointList:
-                #    self.roiPointList.pop()
-                #    self.maskList.pop()
-                #    if self.maskList:
-                #        self.DrawRoiList(self.roiPointList, self.maskList)
-                #        cv2.imshow(self.state, self.imgCurrent)
-                #    else:
-                #        cv2.imshow(self.state, self.imgCurrent)
-                #else:
-                #    cv2.imshow(self.state, self.imgCurrent)
-                #keyInput = None
-            if keyInput == 9: # Tab
+            if keyInput == 9: # Tab mode
                 self.isDelete = False
                 self.isChoose = True
             if keyInput == 27:
@@ -98,8 +82,8 @@ class CCheckGt:
         
     def OnMouse(self, event, x, y, flags, param):
         """
-        drawing：FreeChoose
-        删除模式：响应鼠标左键按下。
+        input 'd' to get into delete mode, one can choose bbox to delete
+        input 'tab' to get into choose mode, one can draw object or mask
         """
         if self.isChoose:
             if event == cv2.EVENT_LBUTTONDOWN:
