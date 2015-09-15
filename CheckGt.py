@@ -121,7 +121,7 @@ class CCheckGt:
                 self.endY = y
 
                 cv2.circle(self.imgTmp,(int((self.endX-self.startX)/2+self.startX), int((self.endY-self.startY)/2+self.startY)),self.lineThickness,self.color_blue,-1)
-                cv2.rectangle(self.imgTmp,(self.startX,self.startY),(self.endX, self.endY), self.color_blue,self.lineThickness)
+                cv2.rectangle(self.imgTmp,(self.startX, self.startY),(self.endX, self.endY), self.color_blue,self.lineThickness)
                 cv2.imshow(self.state, self.imgTmp)
             elif event == cv2.EVENT_RBUTTONUP:
                 if self.isAppRect and self.startX != self.endX and self.startY !=self.endY:
@@ -174,7 +174,7 @@ class CCheckGt:
         ###save whole image
         imgPath = os.path.join(self.SavePathDict['imgPath'], self.imgName)
         cv2.imwrite(imgPath, self.img)
-        txtPath = os.path.join(self.SavePathDict['txtPath'], os.path.splitext(self.imgName)[0]+'.txt')
+        txtPath = os.path.join(self.SavePathDict['txtPath'], os.path.splitext(os.path.basename(self.imgName))[0]+'.txt')
         fOut = open(txtPath,'a')
         fOut.close()
         fOut = open(txtPath,'w')
@@ -186,7 +186,7 @@ class CCheckGt:
             ###save objects
             if mask ==0:
                 objectImg = self.img[rect[1]:rect[1]+rect[3], rect[0]:rect[0]+rect[2]]
-                cv2.imwrite(os.path.join(self.SavePathDict['objPath'], os.path.splitext(self.imgName)[0]+'_'+str(objNum)+'.png'), objectImg)
+                cv2.imwrite(os.path.join(self.SavePathDict['objPath'], os.path.splitext(os.path.basename(self.imgName))[0]+'_'+str(objNum)+'.png'), objectImg)
                 objNum += 1
             ###save labeled ground truth
             fOut.write(('%s %d %d %d %d 0 0 0 0 0 %d 0\n') % (self.label,rect[0],rect[1],rect[2],rect[3],mask))
