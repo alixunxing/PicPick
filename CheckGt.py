@@ -22,13 +22,14 @@ class CCheckGt:
         self.roiPointList = list()
         self.maskList = list()
    
-    def InputInfo(self, imgName, txtName, state, VisualParamDict):
+    def InputInfo(self, imgName, txtName, state, SavePathDict, VisualParamDict):
         '''
         the 'clean' image without any drawing and the image title(a.k. the state) is inputted by this function
         '''
         self.imgName = imgName
         self.txtName = txtName
         self.state = state
+        self.SavePathDict = SavePathDict
         self.lineThickness = VisualParamDict['LineThickness']
 
     def InitVar(self):
