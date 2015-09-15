@@ -1,7 +1,7 @@
 <?xml version="1.0" ?>
 <Parameter>
   <General_Parameters>
-    	<Mode>Check</Mode>
+    	<Mode>FreeChoose</Mode>
 	    <!--Mode:
         1.Check
         2.PreChooseSingleObject
@@ -11,7 +11,7 @@
         -->
 	    <SrcFormat>picture</SrcFormat>
 	    <!--SrcFormat:1.picture 2.video-->
-      <Label>char</Label>
+      <Label>text</Label>
       <Scale_Parameters>
         	<ScaleBy>width</ScaleBy>
 	        <!--ScaleBy:1.width 2.height-->
@@ -33,7 +33,7 @@
   </Video_Parameters>
 
   <Picture_Parameters>
-      <PictureSrc>D:\projects\textDetection\data\box</PictureSrc>
+      <PictureSrc>D:\projects\tang\py++\Container_Number_Recognition\img</PictureSrc>
   </Picture_Parameters>
 	
 	<SavePath>D:\d</SavePath>
