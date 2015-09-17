@@ -1,7 +1,7 @@
 <?xml version="1.0" ?>
 <Parameter>
   <General_Parameters>
-    	<Mode>Check</Mode>
+    	<Mode>PreChooseMultiObject</Mode>
 	    <!--Mode:
         1.Check
         2.PreChooseSingleObject
@@ -33,7 +33,7 @@
   </Video_Parameters>
 
   <Picture_Parameters>
-      <PictureSrc>D:\projects\tang\py++\Container_Number_Recognition\img</PictureSrc>
+      <PictureSrc>D:\projects\tang\py++\Container_Number_Recognition\img\pos</PictureSrc>
   </Picture_Parameters>
 	
 	<SavePath>D:\d</SavePath>

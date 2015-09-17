@@ -56,7 +56,7 @@ class CFreeChoose:
             if self.isAppRect and self.startX != self.endX and self.startY !=self.endY:
                 self.imgCurrent = self.imgTmp.copy()
                 ###### if drawing started from the right-bottom, swap(startPoint, endPoint)
-                self.SwapXY()      
+                self.SwapXY()
                 self.roiPointList.append([self.startX, self.startY, self.endX, self.endY])
                 self.maskList.append(0)
                 self.isAppRect = False
