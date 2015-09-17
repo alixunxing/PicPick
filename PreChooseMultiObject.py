@@ -26,6 +26,7 @@ class CPreChooseMultiObject:
         the 'clean' image without any drawing and the image title(a.k. the state) is inputted by this function
         '''
         self.img = img
+        self.hgt, self.wid, c = self.img.shape
         self.imgName = imgName
         self.state = state
         self.label = label
@@ -54,7 +55,7 @@ class CPreChooseMultiObject:
                 cv2.rectangle(self.imgTmp, (self.startX,self.startY),(self.endX, self.endY), self.color_green, self.lineThickness)
                 cv2.imshow(self.state, self.imgTmp)
             else:
-                cv2.circle(self.imgTmp, (int((self.endX-self.startX)/2+self.startX), int((self.endY-self.startY)/2+self.startY)), self.lineThickness, self.color_blue,-1)
+                cv2.circle(self.imgTmp, (int((self.endX-self.startX)/2+self.startX), int((self.endY-self.startY)/2+self.startY)), self.lineThickness, self.color_blue, -1)
                 cv2.rectangle(self.imgTmp, (self.startX,self.startY), (self.endX, self.endY), self.color_blue, self.lineThickness)
                 cv2.imshow(self.state, self.imgTmp)
         elif event == cv2.EVENT_RBUTTONUP:
@@ -67,6 +68,7 @@ class CPreChooseMultiObject:
                     self.maskList.append(0)
                     self.width = self.endX - self.startX
                     self.height = self.endY - self.startY
+                    print self.width, self.height
                 else:
                     self.maskList.append(1)
                 self.isAppRect = False
