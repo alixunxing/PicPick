@@ -68,7 +68,6 @@ class CPreChooseMultiObject:
                     self.maskList.append(0)
                     self.width = self.endX - self.startX
                     self.height = self.endY - self.startY
-                    print self.width, self.height
                 else:
                     self.maskList.append(1)
                 self.isAppRect = False
