@@ -29,8 +29,7 @@ class CFreeChoose:
         the 'clean' image without any drawing and the image title(a.k. the state) is inputted by this function
         '''
         self.img = img
-        self.hgt, self.wid, c = img.shape
-        #print self.hgt, self.wid
+        self.hgt, self.wid, c = self.img.shape
         self.imgName = imgName
         self.state = state
         self.label = label

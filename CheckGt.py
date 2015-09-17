@@ -38,6 +38,7 @@ class CCheckGt:
 
     def Check(self):
         self.img = cv2.imread(self.imgName)
+        self.hgt, self.wid, c = self.img.shape
         self.imgCurrent = self.img.copy()
         with open(self.txtName, 'r') as fin:
             lines = fin.readlines()
