@@ -104,9 +104,7 @@ class CCheckGt:
                 if self.isAppRect and self.startX != self.endX and self.startY !=self.endY:
                     self.imgCurrent = self.imgTmp.copy()
                     ###### if drawing started from the right-bottom, swap(startPoint, endPoint)
-                    if self.startX > self.endX:
-                        self.startX, self.endX = self.endX, self.startX
-                        self.startY, self.endY = self.endY, self.startY
+                    self.SwapXY()
                     self.roiPointList.append([self.startX, self.startY, self.endX, self.endY])
                     self.maskList.append(0)
                     self.isAppRect = False
@@ -121,15 +119,13 @@ class CCheckGt:
                 self.endY = y
 
                 cv2.circle(self.imgTmp,(int((self.endX-self.startX)/2+self.startX), int((self.endY-self.startY)/2+self.startY)),self.lineThickness,self.color_blue,-1)
-                cv2.rectangle(self.imgTmp,(self.startX, self.startY),(self.endX, self.endY), self.color_blue,self.lineThickness)
+                cv2.rectangle(self.imgTmp,(self.startX,self.startY),(self.endX, self.endY), self.color_blue,self.lineThickness)
                 cv2.imshow(self.state, self.imgTmp)
             elif event == cv2.EVENT_RBUTTONUP:
                 if self.isAppRect and self.startX != self.endX and self.startY !=self.endY:
                     self.imgCurrent = self.imgTmp.copy()
                     ###### if drawing started from the right-bottom, swap(startPoint, endPoint)
-                    if self.startX > self.endX:
-                        self.startX,self.endX = self.endX,self.startX
-                        self.startY,self.endY = self.endY,self.startY
+                    self.SwapXY()
                     self.roiPointList.append([self.startX, self.startY, self.endX, self.endY])
                     self.maskList.append(1)
                     self.isAppRect = False
@@ -192,3 +188,36 @@ class CCheckGt:
             fOut.write(('%s %d %d %d %d 0 0 0 0 0 %d 0\n') % (self.label,rect[0],rect[1],rect[2],rect[3],mask))
         
         fOut.close()
+        
+    def SwapXY(self):
+        if 0 <=self.startX < self.wid-1 and 0<= self.endX<self.wid-1 and 0<= self.startY < self.hgt-1 and 0<= self.endY<self.hgt-1:
+            if self.startX > self.endX:
+                self.startX, self.endX = self.endX, self.startX
+            if self.startY > self.endY:
+                self.startY, self.endY = self.endY, self.startY
+        elif self.endX < 0:       
+             self.endX = 0
+             self.startX, self.endX = self.endX, self.startX
+             if self.endY < 0:
+                self.endY = 0
+             if self.startY > self.endY:
+                self.startY, self.endY = self.endY, self.startY
+        elif self.endX > self.wid - 1:
+             self.endX = self.wid - 1
+             if self.endY < 0:
+                self.endY = 0
+             if self.startY > self.endY:
+                self.startY, self.endY = self.endY, self.startY
+        if self.endY < 0:
+           self.endY = 0
+           self.startY, self.endY = self.endY, self.startY
+           if self.endX < 0:
+              self.endX = 0
+           if self.startX > self.endX:
+              self.startX, self.endX = self.endX, self.startX
+        elif self.endY > self.hgt - 1:
+             self.endY = self.hgt - 1
+             if self.endX > self.wid - 1:
+                self.endX = self.wid - 1
+             if self.startX > self.endX:
+                self.startX, self.endX = self.endX, self.startX
