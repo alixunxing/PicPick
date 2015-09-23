@@ -8,10 +8,7 @@ import numpy as np
 import math
 import os
 
-class CBoxMerge:
-    def _init_(self):
-        pass
-        
+class CBoxMerge:        
     def BBoxMerge(self, bboxesRaw, overlap=0.9):
         bboxes = list()
         flag   = [True]*len(bboxesRaw) # True - no need merge
@@ -73,8 +70,9 @@ class CCharacterPick:
         self.color_violet= (211,0,148)
         self.threshold = 0.8
         self.roiPointList = list()
-        self.charRoiList = list() 
+        self.charRoiList = list()
         self.maskList = list()
+        self.isTab = False
    
     def InputInfo(self, img, imgName, state, label, SavePathDict, VisualParamDict):
         '''
@@ -87,7 +85,6 @@ class CCharacterPick:
         self.SavePathDict = SavePathDict
         self.lineThickness = VisualParamDict['LineThickness']
 
-
     def InitVar(self):
         self.roiPointList  = list()
         self.maskList = list()
@@ -97,7 +94,7 @@ class CCharacterPick:
         CharacterPick does not have VideoPicPick mode!!!
         """
         flag = 'exit'
-        return None, None, flag 
+        return None, None, flag
                  
     def PicturePicPick(self):
         """
@@ -119,6 +116,8 @@ class CCharacterPick:
         cv2.setMouseCallback(self.state, self.OnMouse)
         while True:
             keyInput = cv2.waitKey(0)
+            if keyInput == 9:
+                self.isTab = not self.isTab
             if keyInput == ord('d'):
                 self.imgCurrent = self.imgChar.copy()
                 if self.roiPointList:
@@ -235,30 +234,6 @@ class CCharacterPick:
                     cv2.rectangle(self.imgCurrent,(roiPoint[0],roiPoint[1]),(roiPoint[2],roiPoint[3]),self.color_blue,self.lineThickness)
             else: # if maskList = [], draw init MSER results
                 cv2.rectangle(self.imgChar,(roiPoint[0],roiPoint[1]),(roiPoint[2],roiPoint[3]),self.color_violet,self.lineThickness)
-
-
-    #def PicturePicPick(self, img ):
-    #    """
-    #    Pick objects on pictures!
-    #    """
-    #    cv2.setMouseCallback(self.state,self.DrawRectangle)
-    #    cv2.imshow(self.state, self.img)
-    #    while True:
-    #        keyDict = {27:'exit', ord('b'):'back', ord(' '):'next'}
-    #        keyInput = cv2.waitKey(0)
-    #        flag = keyDict.get(keyInput)
-    #        if flag != None:
-    #            break
-    #    if self.startX > self.endX:
-    #        self.startX,self.endX = self.endX,self.startX
-    #        self.startY,self.endY = self.endY,self.startY
-    #    rect = [self.startX,self.startY,self.width,self.height,0]
-    #    objectImg = self.img[self.startY:self.endY,self.startX:self.endX]
-    #    if self.savePic == True:
-    #        return rect, mask, flag
-    #        self.savePic == False
-    #    else:
-    #        return []
         
     def CharSegmentation(self,subImg):
         mser = cv2.MSER_create()
