@@ -157,16 +157,17 @@ class CCharacterPick:
             self.startX = x
             self.startY = y
         elif event == cv2.EVENT_MOUSEMOVE and flags == cv2.EVENT_FLAG_LBUTTON:
-            self.isAppRect = True
-            self.imgTmp = self.imgCurrent.copy()
-            self.endX = x
-            self.endY = y
+            if not self.isTab:
+                self.isAppRect = True
+                self.imgTmp = self.imgCurrent.copy()
+                self.endX = x
+                self.endY = y
 
-            cv2.circle(self.imgTmp,(int((self.endX-self.startX)/2+self.startX), int((self.endY-self.startY)/2+self.startY)),self.lineThickness,self.color_green,-1)
-            cv2.rectangle(self.imgTmp,(self.startX,self.startY),(self.endX, self.endY),self.color_green,self.lineThickness)
-            cv2.imshow(self.state, self.imgTmp)
+                cv2.circle(self.imgTmp,(int((self.endX-self.startX)/2+self.startX), int((self.endY-self.startY)/2+self.startY)),self.lineThickness,self.color_green,-1)
+                cv2.rectangle(self.imgTmp,(self.startX,self.startY),(self.endX, self.endY),self.color_green,self.lineThickness)
+                cv2.imshow(self.state, self.imgTmp)
         elif event == cv2.EVENT_LBUTTONUP:
-            if self.isAppRect and self.startX != self.endX and self.startY !=self.endY:
+            if self.isAppRect and self.startX != self.endX and self.startY !=self.endY and not self.isTab:
                 self.imgCurrent = self.imgTmp.copy()
                 ###### if drawing started from the right-bottom, swap(startPoint, endPoint)
                 if self.startX > self.endX:
@@ -175,6 +176,27 @@ class CCharacterPick:
                 self.roiPointList.append([self.startX, self.startY, self.endX, self.endY])
                 self.maskList.append(0)
                 self.isAppRect = False
+            if self.isTab:
+                for charRoi in self.charRoiList:
+                    startX = charRoi[0]
+                    startY = charRoi[1]
+                    endX   = charRoi[2]
+                    endY   = charRoi[3]
+                    if (startX < self.startX < endX) and (startY < self.startY < endY):
+                        isExist = False
+                        for roiPoint in self.roiPointList:
+                            if roiPoint == charRoi:
+                                isExist = True
+                                break
+                        if isExist:
+                            break
+                        else:
+                            self.roiPointList.append(charRoi)
+                            self.maskList.append(0)
+                            cv2.circle(self.imgCurrent, (int((endX-startX)/2+startX), int((endY-startY)/2+startY)), self.lineThickness, self.color_green,-1)
+                            cv2.rectangle(self.imgCurrent, (startX, startY),(endX, endY), self.color_green, self.lineThickness)
+                            cv2.imshow(self.state, self.imgCurrent)
+                            break
         if event == cv2.EVENT_RBUTTONDOWN:
             self.startX = x
             self.startY = y
@@ -197,28 +219,28 @@ class CCharacterPick:
                 self.roiPointList.append([self.startX, self.startY, self.endX, self.endY])
                 self.maskList.append(1)
                 self.isAppRect = False
-        if event == cv2.EVENT_LBUTTONDBLCLK:
-            #self.imgTmp = self.imgCurrent.copy()
-            for charRoi in self.charRoiList:
-                startX = charRoi[0]
-                startY = charRoi[1]
-                endX   = charRoi[2]
-                endY   = charRoi[3]
-                if (startX < x < endX) and (startY < y < endY):
-                    isExist = False
-                    for roiPoint in self.roiPointList:
-                        if roiPoint == charRoi:
-                            isExist = True
-                            break
-                    if isExist:
-                        break
-                    else:
-                        self.roiPointList.append(charRoi)
-                        self.maskList.append(0)
-                        cv2.circle(self.imgCurrent, (int((endX-startX)/2+startX), int((endY-startY)/2+startY)), self.lineThickness, self.color_green,-1)
-                        cv2.rectangle(self.imgCurrent, (startX, startY),(endX, endY), self.color_green, self.lineThickness)
-                        cv2.imshow(self.state, self.imgCurrent)
-                        break
+        #if event == cv2.EVENT_LBUTTONDBLCLK:
+        #    #self.imgTmp = self.imgCurrent.copy()
+        #    for charRoi in self.charRoiList:
+        #        startX = charRoi[0]
+        #        startY = charRoi[1]
+        #        endX   = charRoi[2]
+        #        endY   = charRoi[3]
+        #        if (startX < x < endX) and (startY < y < endY):
+        #            isExist = False
+        #            for roiPoint in self.roiPointList:
+        #                if roiPoint == charRoi:
+        #                    isExist = True
+        #                    break
+        #            if isExist:
+        #                break
+        #            else:
+        #                self.roiPointList.append(charRoi)
+        #                self.maskList.append(0)
+        #                cv2.circle(self.imgCurrent, (int((endX-startX)/2+startX), int((endY-startY)/2+startY)), self.lineThickness, self.color_green,-1)
+        #                cv2.rectangle(self.imgCurrent, (startX, startY),(endX, endY), self.color_green, self.lineThickness)
+        #                cv2.imshow(self.state, self.imgCurrent)
+        #                break
 
     def DrawRoiList(self, roiPointList = list(), maskList = list()):
         """
