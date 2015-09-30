@@ -156,47 +156,27 @@ class CCharacterPick:
         if event == cv2.EVENT_LBUTTONDOWN:
             self.startX = x
             self.startY = y
-        elif event == cv2.EVENT_MOUSEMOVE and flags == cv2.EVENT_FLAG_LBUTTON:
-            if not self.isTab:
-                self.isAppRect = True
-                self.imgTmp = self.imgCurrent.copy()
-                self.endX = x
-                self.endY = y
-
-                cv2.circle(self.imgTmp,(int((self.endX-self.startX)/2+self.startX), int((self.endY-self.startY)/2+self.startY)),self.lineThickness,self.color_green,-1)
-                cv2.rectangle(self.imgTmp,(self.startX,self.startY),(self.endX, self.endY),self.color_green,self.lineThickness)
-                cv2.imshow(self.state, self.imgTmp)
         elif event == cv2.EVENT_LBUTTONUP:
-            if self.isAppRect and self.startX != self.endX and self.startY !=self.endY and not self.isTab:
-                self.imgCurrent = self.imgTmp.copy()
-                ###### if drawing started from the right-bottom, swap(startPoint, endPoint)
-                if self.startX > self.endX:
-                    self.startX, self.endX = self.endX, self.startX
-                    self.startY, self.endY = self.endY, self.startY
-                self.roiPointList.append([self.startX, self.startY, self.endX, self.endY])
-                self.maskList.append(0)
-                self.isAppRect = False
-            if self.isTab:
-                for charRoi in self.charRoiList:
-                    startX = charRoi[0]
-                    startY = charRoi[1]
-                    endX   = charRoi[2]
-                    endY   = charRoi[3]
-                    if (startX < self.startX < endX) and (startY < self.startY < endY):
-                        isExist = False
-                        for roiPoint in self.roiPointList:
-                            if roiPoint == charRoi:
-                                isExist = True
-                                break
-                        if isExist:
+            for charRoi in self.charRoiList:
+                startX = charRoi[0]
+                startY = charRoi[1]
+                endX   = charRoi[2]
+                endY   = charRoi[3]
+                if (startX < self.startX < endX) and (startY < self.startY < endY):
+                    isExist = False
+                    for roiPoint in self.roiPointList:
+                        if roiPoint == charRoi:
+                            isExist = True
                             break
-                        else:
-                            self.roiPointList.append(charRoi)
-                            self.maskList.append(0)
-                            cv2.circle(self.imgCurrent, (int((endX-startX)/2+startX), int((endY-startY)/2+startY)), self.lineThickness, self.color_green,-1)
-                            cv2.rectangle(self.imgCurrent, (startX, startY),(endX, endY), self.color_green, self.lineThickness)
-                            cv2.imshow(self.state, self.imgCurrent)
-                            break
+                    if isExist:
+                        break
+                    else:
+                        self.roiPointList.append(charRoi)
+                        self.maskList.append(0)
+                        cv2.circle(self.imgCurrent, (int((endX-startX)/2+startX), int((endY-startY)/2+startY)), self.lineThickness, self.color_green,-1)
+                        cv2.rectangle(self.imgCurrent, (startX, startY),(endX, endY), self.color_green, self.lineThickness)
+                        cv2.imshow(self.state, self.imgCurrent)
+                        break
         if event == cv2.EVENT_RBUTTONDOWN:
             self.startX = x
             self.startY = y
@@ -206,19 +186,79 @@ class CCharacterPick:
             self.endX = x
             self.endY = y
 
-            cv2.circle(self.imgTmp,(int((self.endX-self.startX)/2+self.startX), int((self.endY-self.startY)/2+self.startY)),self.lineThickness,self.color_blue,-1)
-            cv2.rectangle(self.imgTmp,(self.startX,self.startY),(self.endX, self.endY), self.color_blue,self.lineThickness)
+            cv2.circle(self.imgTmp,(int((self.endX-self.startX)/2+self.startX), int((self.endY-self.startY)/2+self.startY)), self.lineThickness, self.color_green, -1)
+            cv2.rectangle(self.imgTmp, (self.startX,self.startY), (self.endX, self.endY), self.color_green, self.lineThickness)
             cv2.imshow(self.state, self.imgTmp)
         elif event == cv2.EVENT_RBUTTONUP:
             if self.isAppRect and self.startX != self.endX and self.startY !=self.endY:
                 self.imgCurrent = self.imgTmp.copy()
                 ###### if drawing started from the right-bottom, swap(startPoint, endPoint)
-                if self.startX > self.endX:
-                    self.startX,self.endX = self.endX,self.startX
-                    self.startY,self.endY = self.endY,self.startY
+                self.SwapXY()
                 self.roiPointList.append([self.startX, self.startY, self.endX, self.endY])
-                self.maskList.append(1)
+                self.maskList.append(0)
                 self.isAppRect = False
+        # if event == cv2.EVENT_LBUTTONDOWN:
+            # self.startX = x
+            # self.startY = y
+        # elif event == cv2.EVENT_MOUSEMOVE and flags == cv2.EVENT_FLAG_LBUTTON:
+            # if not self.isTab:
+                # self.isAppRect = True
+                # self.imgTmp = self.imgCurrent.copy()
+                # self.endX = x
+                # self.endY = y
+
+                # cv2.circle(self.imgTmp,(int((self.endX-self.startX)/2+self.startX), int((self.endY-self.startY)/2+self.startY)),self.lineThickness,self.color_green,-1)
+                # cv2.rectangle(self.imgTmp,(self.startX,self.startY),(self.endX, self.endY),self.color_green,self.lineThickness)
+                # cv2.imshow(self.state, self.imgTmp)
+        # elif event == cv2.EVENT_LBUTTONUP:
+            # if self.isAppRect and self.startX != self.endX and self.startY !=self.endY and not self.isTab:
+                # self.imgCurrent = self.imgTmp.copy()
+                # ###### if drawing started from the right-bottom, swap(startPoint, endPoint)
+                # self.SwapXY()
+                # self.roiPointList.append([self.startX, self.startY, self.endX, self.endY])
+                # self.maskList.append(0)
+                # self.isAppRect = False
+            # if self.isTab:
+                # for charRoi in self.charRoiList:
+                    # startX = charRoi[0]
+                    # startY = charRoi[1]
+                    # endX   = charRoi[2]
+                    # endY   = charRoi[3]
+                    # if (startX < self.startX < endX) and (startY < self.startY < endY):
+                        # isExist = False
+                        # for roiPoint in self.roiPointList:
+                            # if roiPoint == charRoi:
+                                # isExist = True
+                                # break
+                        # if isExist:
+                            # break
+                        # else:
+                            # self.roiPointList.append(charRoi)
+                            # self.maskList.append(0)
+                            # cv2.circle(self.imgCurrent, (int((endX-startX)/2+startX), int((endY-startY)/2+startY)), self.lineThickness, self.color_green,-1)
+                            # cv2.rectangle(self.imgCurrent, (startX, startY),(endX, endY), self.color_green, self.lineThickness)
+                            # cv2.imshow(self.state, self.imgCurrent)
+                            # break
+        # if event == cv2.EVENT_RBUTTONDOWN:
+            # self.startX = x
+            # self.startY = y
+        # elif event == cv2.EVENT_MOUSEMOVE and flags == cv2.EVENT_FLAG_RBUTTON:
+            # self.isAppRect = True
+            # self.imgTmp = self.imgCurrent.copy()
+            # self.endX = x
+            # self.endY = y
+
+            # cv2.circle(self.imgTmp,(int((self.endX-self.startX)/2+self.startX), int((self.endY-self.startY)/2+self.startY)),self.lineThickness,self.color_blue,-1)
+            # cv2.rectangle(self.imgTmp,(self.startX,self.startY),(self.endX, self.endY), self.color_blue,self.lineThickness)
+            # cv2.imshow(self.state, self.imgTmp)
+        # elif event == cv2.EVENT_RBUTTONUP:
+            # if self.isAppRect and self.startX != self.endX and self.startY !=self.endY:
+                # self.imgCurrent = self.imgTmp.copy()
+                # ###### if drawing started from the right-bottom, swap(startPoint, endPoint)
+                # self.SwapXY()
+                # self.roiPointList.append([self.startX, self.startY, self.endX, self.endY])
+                # self.maskList.append(1)
+                # self.isAppRect = False
         #if event == cv2.EVENT_LBUTTONDBLCLK:
         #    #self.imgTmp = self.imgCurrent.copy()
         #    for charRoi in self.charRoiList:
@@ -406,3 +446,36 @@ class CCharacterPick:
             fOut.write(('%s %d %d %d %d 0 0 0 0 0 %d 0\n') % (self.label,rect[0],rect[1],rect[2],rect[3],mask))
         
         fOut.close()
+                
+    def SwapXY(self):
+        if 0 <=self.startX < self.wid-1 and 0<= self.endX<self.wid-1 and 0<= self.startY < self.hgt-1 and 0<= self.endY<self.hgt-1:
+            if self.startX > self.endX:
+                self.startX, self.endX = self.endX, self.startX
+            if self.startY > self.endY:
+                self.startY, self.endY = self.endY, self.startY
+        elif self.endX < 0:       
+             self.endX = 0
+             self.startX, self.endX = self.endX, self.startX
+             if self.endY < 0:
+                self.endY = 0
+             if self.startY > self.endY:
+                self.startY, self.endY = self.endY, self.startY
+        elif self.endX > self.wid - 1:
+             self.endX = self.wid - 1
+             if self.endY < 0:
+                self.endY = 0
+             if self.startY > self.endY:
+                self.startY, self.endY = self.endY, self.startY
+        if self.endY < 0:
+           self.endY = 0
+           self.startY, self.endY = self.endY, self.startY
+           if self.endX < 0:
+              self.endX = 0
+           if self.startX > self.endX:
+              self.startX, self.endX = self.endX, self.startX
+        elif self.endY > self.hgt - 1:
+             self.endY = self.hgt - 1
+             if self.endX > self.wid - 1:
+                self.endX = self.wid - 1
+             if self.startX > self.endX:
+                self.startX, self.endX = self.endX, self.startX
