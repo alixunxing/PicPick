@@ -169,7 +169,7 @@ class CPicPick:
                         self.ScalebyWH()
                     assert len(self.rectList) == len(self.maskList)
                     self.doPicPick.Save(self.rectList)
-                    cv2.destroyAllWindows()
+                cv2.destroyAllWindows()
             else:
                 print 'Unkown keyboard input -> ', returnFlag
                 assert False
