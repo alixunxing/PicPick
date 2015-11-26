@@ -10,6 +10,7 @@ import os
 
 class CBoxMerge:        
     def BBoxMerge(self, bboxesRaw, overlap=0.9):
+        bboxesRaw = self.DelNGBboxes(bboxesRaw)
         bboxes = list()
         flag   = [True]*len(bboxesRaw) # True - no need merge
                                        # False - need merge
@@ -29,6 +30,14 @@ class CBoxMerge:
                             assert True
             if flag[i] == True:
                 bboxes.append(bboxesRaw[i])
+        return bboxes
+        
+    def DelNGBboxes(self, bboxesRaw):
+        bboxes = list()
+        for i in range(len(bboxesRaw)):
+            if bboxesRaw[i][2] < 100 and bboxesRaw[i][3] < 100:
+                bboxes.append(bboxesRaw[i])
+                
         return bboxes
         
     def isIn(self, bbox1, bbox2, overlap):
@@ -73,6 +82,8 @@ class CCharacterPick:
         self.charRoiList = list()
         self.maskList = list()
         self.isTab = False
+        
+        self.mser = cv2.MSER_create( 5, 60, 14400, 0.25, 0.2, 200, 1.01, 0.003, 5 )
    
     def InputInfo(self, img, imgName, state, label, SavePathDict, VisualParamDict):
         '''
@@ -298,10 +309,18 @@ class CCharacterPick:
                 cv2.rectangle(self.imgChar,(roiPoint[0],roiPoint[1]),(roiPoint[2],roiPoint[3]),self.color_violet,self.lineThickness)
         
     def CharSegmentation(self,subImg):
-        mser = cv2.MSER_create()
         gray = cv2.cvtColor(subImg, cv2.COLOR_BGR2GRAY)
-
-        bboxes = mser.detectRegions(gray, None)
+        bboxes=list()
+        msers = self.mser.detectRegions(gray, None)
+        
+        for XYmser in msers:
+            Xmser = np.argsort(XYmser, axis=0)
+            Xmin = XYmser[Xmser[0][0]][0]
+            Xmax = XYmser[Xmser[-1][0]][0]
+            Ymin = XYmser[Xmser[0][1]][1]
+            Ymax = XYmser[Xmser[-1][1]][1]
+            bboxes.append([Xmin, Ymin, Xmax-Xmin+1, Ymax-Ymin+1])
+        
         doMerge = CBoxMerge()
         bboxes = doMerge.BBoxMerge(bboxes, self.threshold)
 

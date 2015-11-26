@@ -11,7 +11,7 @@
         -->
 	    <SrcFormat>picture</SrcFormat>
 	    <!--SrcFormat:1.picture 2.video-->
-      <Label>char</Label>
+      <Label>Text_String</Label>
       <Scale_Parameters>
         	<ScaleBy>width</ScaleBy>
 	        <!--ScaleBy:1.width 2.height-->
@@ -22,7 +22,7 @@
       </Scale_Parameters>
       
       <Visual_Parameters>
-          <LineThickness thickness="3"/>
+          <LineThickness thickness="2"/>
           <Resolution width="1280" height="720"/>
       </Visual_Parameters>
   </General_Parameters>
@@ -33,10 +33,10 @@
   </Video_Parameters>
 
   <Picture_Parameters>
-      <PictureSrc>D:\projects\tang\py++\Container_Number_Recognition\img\pos</PictureSrc>
+      <PictureSrc>D:\LYS\OriginalIMG\20151102\Side</PictureSrc>
   </Picture_Parameters>
 	
 	<SavePath>D:\d</SavePath>
-	<CheckPath>D:\projects\pick\1</CheckPath>
+	<CheckPath>D:\d\test</CheckPath>
 
 </Parameter>

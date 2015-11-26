@@ -159,9 +159,10 @@ class CPicPick:
                 break
             elif returnFlag == 'back':
                 if idx>0:
-                    self.PictureRecursion(idx-1, imgNameList)
                     cv2.destroyAllWindows()
+                    self.PictureRecursion(idx-1, imgNameList)
                 else:
+                    cv2.destroyAllWindows()
                     self.PictureRecursion(0, imgNameList)
             elif returnFlag == 'next':
                 if self.rectList:
