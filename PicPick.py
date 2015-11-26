@@ -63,7 +63,7 @@ class CPicPick:
         self.CheckRecursion(0, imgNameList, txtNameList)
 
     def CheckRecursion(self, startIdx, imgNameList, txtNameList):
-        for idx in range(len(imgNameList)):
+        for idx in range(startIdx, len(imgNameList)):
             assert os.path.splitext(os.path.basename(imgNameList[idx]))[0] == os.path.splitext(os.path.basename(txtNameList[idx]))[0]
             state = imgNameList[idx] + '    ' + str(idx+1) + '/' + str(len(imgNameList))
             self.Create_Window(state)
@@ -74,9 +74,10 @@ class CPicPick:
                 break
             elif returnFlag == 'back':
                 if idx>0:
-                    self.CheckRecursion(idx-1, imgNameList, txtNameList)
                     cv2.destroyAllWindows()
+                    self.CheckRecursion(idx-1, imgNameList, txtNameList)
                 else:
+                    cv2.destroyAllWindows()
                     self.CheckRecursion(0, imgNameList, txtNameList)
             elif returnFlag == 'next':
                 if self.rectList:
