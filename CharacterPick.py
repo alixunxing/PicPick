@@ -35,7 +35,7 @@ class CBoxMerge:
     def DelNGBboxes(self, bboxesRaw):
         bboxes = list()
         for i in range(len(bboxesRaw)):
-            if bboxesRaw[i][2] < 100 and bboxesRaw[i][3] < 100:
+            if bboxesRaw[i][2] < 100 and 10 < bboxesRaw[i][3] < 100:
                 bboxes.append(bboxesRaw[i])
                 
         return bboxes
