@@ -313,12 +313,11 @@ class CCharacterPick:
         bboxes=list()
         msers = self.mser.detectRegions(gray, None)
         
-        for XYmser in msers:
-            Xmser = np.argsort(XYmser, axis=0)
-            Xmin = XYmser[Xmser[0][0]][0]
-            Xmax = XYmser[Xmser[-1][0]][0]
-            Ymin = XYmser[Xmser[0][1]][1]
-            Ymax = XYmser[Xmser[-1][1]][1]
+        for mser in msers:
+            Xmin = min(mser[:, 0])
+            Xmax = max(mser[:, 0])
+            Ymin = min(mser[:, 1])
+            Ymax = max(mser[:, 1])
             bboxes.append([Xmin, Ymin, Xmax-Xmin+1, Ymax-Ymin+1])
         
         doMerge = CBoxMerge()
