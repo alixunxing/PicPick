@@ -1,4 +1,4 @@
-"""
+﻿"""
 @Create: 2015/7/8
 @author: Tang Yu-Jia
 """
@@ -13,6 +13,7 @@ class CCheckGt:
         self.width = self.height = 0
         self.isChoose = False # Is opened choose mode?
         self.isDelete = False # Is opened delete mode?
+        self.isLabel  = False # Is opened labeling mode?
         self.isAppRect = False # Is a Rect appended into list right now?
         self.roiPointList = list() # start point and end point
         self.maskList = list() # len(mask) == len(roiPointList)
@@ -54,9 +55,28 @@ class CCheckGt:
             if keyInput == ord('d'): # Delete mode
                 self.isDelete = True
                 self.isChoose = False
-            if keyInput == 9: # Tab mode
+                self.isLabel  = False
+                self.imgCurrent = self.img.copy()
+                self.DrawRoiList(self.roiPointList, self.maskList)
+                cv2.putText(self.imgCurrent, 'Delete Mode', (0,30), 1, 3, self.color_red, self.lineThickness)
+                cv2.imshow(self.state, self.imgCurrent)
+            if keyInput == 9: # Tab, choose mode
                 self.isDelete = False
                 self.isChoose = True
+                self.isLabel  = False
+                self.imgCurrent = self.img.copy()
+                self.DrawRoiList(self.roiPointList, self.maskList)
+                cv2.putText(self.imgCurrent, 'Choose Mode', (0,30), 1, 3, self.color_red, self.lineThickness)
+                cv2.imshow(self.state, self.imgCurrent)
+            if keyInput == ord('l'): # Tab, choose mode
+                self.isDelete = False
+                self.isChoose = False
+                self.isLabel  = True
+                self.imgCurrent = self.img.copy()
+                self.DrawRoiList(self.roiPointList, self.maskList)
+                cv2.putText(self.imgCurrent, 'Label Mode', (0,30), 1, 3, self.color_red, self.lineThickness)
+                cv2.putText(self.imgCurrent, '1:Human 2:Bike 3:Car', (0,60), 1, 3, self.color_red, self.lineThickness)
+                cv2.imshow(self.state, self.imgCurrent)
             if keyInput == 27:
                 flag = 'exit'
                 break
@@ -87,6 +107,7 @@ class CCheckGt:
         """
         input 'd' to get into delete mode, one can choose bbox to delete
         input 'tab' to get into choose mode, one can draw object or mask
+        input 'l' to get into labeling mode, one can relabel object
         """
         if self.isChoose:
             if event == cv2.EVENT_LBUTTONDOWN:
@@ -109,7 +130,7 @@ class CCheckGt:
                     self.roiPointList.append([self.startX, self.startY, self.endX, self.endY])
                     self.maskList.append(0)
                     self.isAppRect = False
-                    self.isChoose = False
+                    # self.isChoose = False
             if event == cv2.EVENT_RBUTTONDOWN:
                 self.startX = x
                 self.startY = y
@@ -130,7 +151,7 @@ class CCheckGt:
                     self.roiPointList.append([self.startX, self.startY, self.endX, self.endY])
                     self.maskList.append(1)
                     self.isAppRect = False
-                    self.isChoose = False
+                    # self.isChoose = False
         elif self.isDelete:
             if event == cv2.EVENT_LBUTTONDOWN:
                 for i, roi in enumerate(self.roiPointList):
@@ -143,12 +164,16 @@ class CCheckGt:
                         cv2.rectangle(self.imgCurrent, (startX,startY), (endX,endY), self.color_red, self.lineThickness)
                         self.roiPointList.pop(i)
                         self.maskList.pop(i)
+                        cv2.putText(self.imgCurrent, 'Delete Mode', (0,30), 1, 3, self.color_red, self.lineThickness)
                         cv2.imshow(self.state, self.imgCurrent)
             elif event == cv2.EVENT_LBUTTONUP:
-                self.isDelete = False
+                # self.isDelete = False
                 self.imgCurrent = self.img.copy()
                 self.DrawRoiList(self.roiPointList, self.maskList)
+                cv2.putText(self.imgCurrent, 'Delete Mode', (0,30), 1, 3, self.color_red, self.lineThickness)
                 cv2.imshow(self.state, self.imgCurrent)
+        elif self.isLabel:
+            pass
            
     def DrawRoiList(self, roiPointList = list(), maskList = list()):
         """

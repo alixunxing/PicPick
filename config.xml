@@ -1,7 +1,7 @@
 <?xml version="1.0" ?>
 <Parameter>
   <General_Parameters>
-    	<Mode>CharacterPick</Mode>
+    	<Mode>Check</Mode>
 	    <!--Mode:
         1.Check
         2.PreChooseSingleObject
@@ -35,6 +35,10 @@
   <Picture_Parameters>
       <PictureSrc>D:\LYS\TEST</PictureSrc>
   </Picture_Parameters>
+
+  <Check_Parameters>
+      <LabelSet>Human Bike Car</LabelSet>
+  </Check_Parameters>
 	
 	<SavePath>D:\LYS\TEST</SavePath>
 	<CheckPath>D:\LYS\OriginalIMG\20151030\Side</CheckPath>
