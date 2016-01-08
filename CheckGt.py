@@ -11,19 +11,24 @@ class CCheckGt:
         self.startX = self.startY = -1
         self.endX = self.endY = -1
         self.width = self.height = 0
+
+        self.LabelSet = list()
+
         self.isChoose = False # Is opened choose mode?
         self.isDelete = False # Is opened delete mode?
         self.isLabel  = False # Is opened labeling mode?
+
         self.isAppRect = False # Is a Rect appended into list right now?
+
         self.roiPointList = list() # start point and end point
-        self.maskList = list() # len(mask) == len(roiPointList)
+        self.maskList     = list() # len(mask) == len(roiPointList)
+        self.labelList    = list() # read labels in posGt
+
         self.color_blue  = (255, 0, 0)
         self.color_green = (0, 255, 0)
         self.color_red   = (0, 0, 255)
-        self.roiPointList = list()
-        self.maskList = list()
    
-    def InputInfo(self, imgName, txtName, state, SavePathDict, VisualParamDict):
+    def InputInfo(self, imgName, txtName, state, SavePathDict, VisualParamDict, LabelSet):
         '''
         the 'clean' image without any drawing and the image title(a.k. the state) is inputted by this function
         '''
@@ -32,10 +37,12 @@ class CCheckGt:
         self.state = state
         self.SavePathDict = SavePathDict
         self.lineThickness = VisualParamDict['LineThickness']
+        self.LabelSet = LabelSet
 
     def InitVar(self):
-        self.roiPointList  = list()
-        self.maskList = list()
+        self.roiPointList = list()
+        self.maskList     = list()
+        self.labelList    = list()
 
     def Check(self):
         self.img = cv2.imread(self.imgName)
@@ -75,7 +82,8 @@ class CCheckGt:
                 self.imgCurrent = self.img.copy()
                 self.DrawRoiList(self.roiPointList, self.maskList)
                 cv2.putText(self.imgCurrent, 'Label Mode', (0,30), 1, 3, self.color_red, self.lineThickness)
-                cv2.putText(self.imgCurrent, '1:Human 2:Bike 3:Car', (0,60), 1, 3, self.color_red, self.lineThickness)
+                for i, label in enumerate(self.LabelSet):
+                    cv2.putText(self.imgCurrent, str(i+1)+':'+label, (0,30*(i+2)), 1, 2, self.color_green, self.lineThickness)
                 cv2.imshow(self.state, self.imgCurrent)
             if keyInput == 27:
                 flag = 'exit'
@@ -99,7 +107,7 @@ class CCheckGt:
         self.InitVar()
         for line in lines[1:]:
             line = line.split()
-            self.label = line[0]
+            self.labelList.append(line[0])
             self.roiPointList.append([int(line[1]), int(line[2]), int(line[1])+int(line[3]), int(line[2])+int(line[4])])
             self.maskList.append(int(line[-2]))
         
@@ -118,7 +126,6 @@ class CCheckGt:
                 self.imgTmp = self.imgCurrent.copy()
                 self.endX = x
                 self.endY = y
-
                 cv2.circle(self.imgTmp,(int((self.endX-self.startX)/2+self.startX), int((self.endY-self.startY)/2+self.startY)),self.lineThickness,self.color_green,-1)
                 cv2.rectangle(self.imgTmp,(self.startX,self.startY),(self.endX, self.endY),self.color_green,self.lineThickness)
                 cv2.imshow(self.state, self.imgTmp)
@@ -211,7 +218,7 @@ class CCheckGt:
                 cv2.imwrite(os.path.join(self.SavePathDict['objPath'], os.path.splitext(os.path.basename(self.imgName))[0]+'_'+str(objNum)+'.png'), objectImg)
                 objNum += 1
             ###save labeled ground truth
-            fOut.write(('%s %d %d %d %d 0 0 0 0 0 %d 0\n') % (self.label,rect[0],rect[1],rect[2],rect[3],mask))
+            fOut.write(('%s %d %d %d %d 0 0 0 0 0 %d 0\n') % (self.labelList[idx],rect[0],rect[1],rect[2],rect[3],mask))
         
         fOut.close()
         

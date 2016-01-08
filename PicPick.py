@@ -22,7 +22,7 @@ class CPicPick:
         Init parameters...
         '''        
         ToolObj = CTool()
-        GeneralParam, VideoParam, PictureParam, SavePath, CheckPath = ToolObj.ConfigReader()
+        GeneralParam, VideoParam, PictureParam, CheckParam, SavePath, CheckPath = ToolObj.ConfigReader()
         self.mode            = GeneralParam[0]
         self.srcFormat       = GeneralParam[1]
         self.label           = GeneralParam[2]
@@ -33,6 +33,7 @@ class CPicPick:
         self.videoSrc        = VideoParam[1]
 
         self.pictureSrc      = PictureParam
+        self.LabelSet      = CheckParam
         self.SavePathDict    = SavePath
         self.CheckPathDict   = CheckPath
 
@@ -67,7 +68,7 @@ class CPicPick:
             assert os.path.splitext(os.path.basename(imgNameList[idx]))[0] == os.path.splitext(os.path.basename(txtNameList[idx]))[0]
             state = imgNameList[idx] + '    ' + str(idx+1) + '/' + str(len(imgNameList))
             self.Create_Window(state)
-            self.doCheck.InputInfo(imgNameList[idx], txtNameList[idx], state, self.CheckPathDict, self.VisualParamDict)
+            self.doCheck.InputInfo(imgNameList[idx], txtNameList[idx], state, self.CheckPathDict, self.VisualParamDict, self.LabelSet)
             self.rectList, self.maskList, returnFlag = self.doCheck.Check()
             if returnFlag == 'exit':
                 cv2.destroyAllWindows()

@@ -92,6 +92,11 @@ class CTool:
             PictureSrc  = PictureNode.find('PictureSrc').text
             return PictureSrc
 
+        def CheckParamReader():
+            CheckNode = root.find('Check_Parameters')
+            LabelSet  = CheckNode.find('LabelSet').text
+            return LabelSet.split()
+
         def SavePathReader():
             SavePath = root.find('SavePath').text
             objPath, imgPath, txtPath = self.FolderEmpty(SavePath)
@@ -106,4 +111,4 @@ class CTool:
             CheckPathDict = {'objPath':objPath, 'imgPath':imgPath, 'txtPath':txtPath}
             return CheckPathDict
 
-        return GeneralParamReader(), VideoParamReader(), PictureParamReader(), SavePathReader(), CheckPathReader()
+        return GeneralParamReader(), VideoParamReader(), PictureParamReader(), CheckParamReader(), SavePathReader(), CheckPathReader()
