@@ -68,7 +68,7 @@ class CPicPick:
             assert os.path.splitext(os.path.basename(imgNameList[idx]))[0] == os.path.splitext(os.path.basename(txtNameList[idx]))[0]
             state = imgNameList[idx] + '    ' + str(idx+1) + '/' + str(len(imgNameList))
             self.Create_Window(state)
-            self.doCheck.InputInfo(imgNameList[idx], txtNameList[idx], state, self.CheckPathDict, self.VisualParamDict, self.LabelSet)
+            self.doCheck.InputInfo(imgNameList[idx], txtNameList[idx], state, self.CheckPathDict, self.VisualParamDict, self.label, self.LabelSet)
             self.rectList, self.maskList, returnFlag = self.doCheck.Check()
             if returnFlag == 'exit':
                 cv2.destroyAllWindows()

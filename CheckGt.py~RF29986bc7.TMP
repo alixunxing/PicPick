@@ -31,7 +31,7 @@ class CCheckGt:
         self.color_green = (0, 255, 0)
         self.color_red   = (0, 0, 255)
    
-    def InputInfo(self, imgName, txtName, state, SavePathDict, VisualParamDict, label, LabelSet):
+    def InputInfo(self, imgName, txtName, state, SavePathDict, VisualParamDict, LabelSet):
         '''
         the 'clean' image without any drawing and the image title(a.k. the state) is inputted by this function
         '''
@@ -40,7 +40,6 @@ class CCheckGt:
         self.state = state
         self.SavePathDict = SavePathDict
         self.lineThickness = VisualParamDict['LineThickness']
-        self.label = label
         self.LabelSet = LabelSet
 
     def InitVar(self):
@@ -71,7 +70,7 @@ class CCheckGt:
                 self.DrawRoiList(self.roiPointList, self.maskList, self.labelList)
                 cv2.putText(self.imgCurrent, 'Delete Mode', (0,30), 1, 3, self.color_red, self.lineThickness)
                 cv2.imshow(self.state, self.imgCurrent)
-            elif keyInput == 9: # Tab, choose mode
+            if keyInput == 9: # Tab, choose mode
                 self.isDelete = False
                 self.isChoose = True
                 self.isLabel  = False
@@ -79,7 +78,7 @@ class CCheckGt:
                 self.DrawRoiList(self.roiPointList, self.maskList, self.labelList)
                 cv2.putText(self.imgCurrent, 'Choose Mode', (0,30), 1, 3, self.color_red, self.lineThickness)
                 cv2.imshow(self.state, self.imgCurrent)
-            elif keyInput == ord('l'): # Tab, choose mode
+            if keyInput == ord('l'): # Tab, choose mode
                 self.isDelete = False
                 self.isChoose = False
                 self.isLabel  = True
@@ -89,19 +88,19 @@ class CCheckGt:
                 for i, label in enumerate(self.LabelSet):
                     cv2.putText(self.imgCurrent, str(i+1)+':'+label, (0,30*(i+2)), 1, 2, self.color_green, self.lineThickness)
                 cv2.imshow(self.state, self.imgCurrent)
-            elif keyInput == ord('1'):
+            if keyInput == ord('1'):
                 self.isLabelNum[0] = True
-            elif keyInput == ord('2'):
+            if keyInput == ord('2'):
                 self.isLabelNum[1] = True
-            elif keyInput == ord('3'):
+            if keyInput == ord('3'):
                 self.isLabelNum[2] = True
-            elif keyInput == 27:
+            if keyInput == 27:
                 flag = 'exit'
                 break
-            elif keyInput == ord(' '):
+            if keyInput == ord(' '):
                 flag = 'next'
                 break
-            elif keyInput == ord('b'):
+            if keyInput == ord('b'):
                 flag = 'back'
                 break
         def Roi2Rect(roiList):
@@ -141,18 +140,13 @@ class CCheckGt:
                 cv2.imshow(self.state, self.imgTmp)
             elif event == cv2.EVENT_LBUTTONUP:
                 if self.isAppRect and self.startX != self.endX and self.startY !=self.endY:
+                    self.imgCurrent = self.imgTmp.copy()
                     ###### if drawing started from the right-bottom, swap(startPoint, endPoint)
                     self.SwapXY()
                     self.roiPointList.append([self.startX, self.startY, self.endX, self.endY])
                     self.maskList.append(0)
-                    self.labelList.append(self.label)
-                    cv2.putText(self.imgTmp, self.label, (self.startX, self.startY), 1, 1, self.color_red, self.lineThickness)
-                    cv2.imshow(self.state, self.imgTmp)
-                    self.imgCurrent = self.imgTmp.copy()
                     self.isAppRect = False
-
                     # self.isChoose = False
-
             if event == cv2.EVENT_RBUTTONDOWN:
                 self.startX = x
                 self.startY = y
@@ -161,19 +155,17 @@ class CCheckGt:
                 self.imgTmp = self.imgCurrent.copy()
                 self.endX = x
                 self.endY = y
+
                 cv2.circle(self.imgTmp,(int((self.endX-self.startX)/2+self.startX), int((self.endY-self.startY)/2+self.startY)),self.lineThickness,self.color_blue,-1)
                 cv2.rectangle(self.imgTmp,(self.startX,self.startY),(self.endX, self.endY), self.color_blue,self.lineThickness)
                 cv2.imshow(self.state, self.imgTmp)
             elif event == cv2.EVENT_RBUTTONUP:
                 if self.isAppRect and self.startX != self.endX and self.startY !=self.endY:
+                    self.imgCurrent = self.imgTmp.copy()
                     ###### if drawing started from the right-bottom, swap(startPoint, endPoint)
                     self.SwapXY()
                     self.roiPointList.append([self.startX, self.startY, self.endX, self.endY])
                     self.maskList.append(1)
-                    self.labelList.append(self.label)
-                    cv2.putText(self.imgTmp, self.label, (self.startX, self.startY), 1, 1, self.color_red, self.lineThickness)
-                    cv2.imshow(self.state, self.imgTmp)
-                    self.imgCurrent = self.imgTmp.copy()
                     self.isAppRect = False
                     # self.isChoose = False
         elif self.isDelete:
@@ -188,7 +180,6 @@ class CCheckGt:
                         cv2.rectangle(self.imgCurrent, (startX,startY), (endX,endY), self.color_red, self.lineThickness)
                         self.roiPointList.pop(i)
                         self.maskList.pop(i)
-                        self.labelList.pop(i)
                         cv2.putText(self.imgCurrent, 'Delete Mode', (0,30), 1, 3, self.color_red, self.lineThickness)
                         cv2.imshow(self.state, self.imgCurrent)
             elif event == cv2.EVENT_LBUTTONUP:
@@ -205,7 +196,7 @@ class CCheckGt:
                 for i, label in enumerate(self.LabelSet):
                     if i==0:
                         cv2.putText(self.imgCurrent, str(i+1)+':'+label, (0,30*(i+2)), 1, 2, self.color_red, self.lineThickness)
-                        #self.isLabelNum[0] = False
+                        self.isLabelNum[0] = False
                     else:
                         cv2.putText(self.imgCurrent, str(i+1)+':'+label, (0,30*(i+2)), 1, 2, self.color_green, self.lineThickness)
                 cv2.imshow(self.state, self.imgCurrent)
@@ -216,7 +207,7 @@ class CCheckGt:
                 for i, label in enumerate(self.LabelSet):
                     if i==1:
                         cv2.putText(self.imgCurrent, str(i+1)+':'+label, (0,30*(i+2)), 1, 2, self.color_red, self.lineThickness)
-                        #self.isLabelNum[1] = False
+                        self.isLabelNum[1] = False
                     else:
                         cv2.putText(self.imgCurrent, str(i+1)+':'+label, (0,30*(i+2)), 1, 2, self.color_green, self.lineThickness)
                 cv2.imshow(self.state, self.imgCurrent)
@@ -227,12 +218,12 @@ class CCheckGt:
                 for i, label in enumerate(self.LabelSet):
                     if i==2:
                         cv2.putText(self.imgCurrent, str(i+1)+':'+label, (0,30*(i+2)), 1, 2, self.color_red, self.lineThickness)
-                        #self.isLabelNum[2] = False
+                        self.isLabelNum[2] = False
                     else:
                         cv2.putText(self.imgCurrent, str(i+1)+':'+label, (0,30*(i+2)), 1, 2, self.color_green, self.lineThickness)
                 cv2.imshow(self.state, self.imgCurrent)
                            
-            if (event == cv2.EVENT_LBUTTONDOWN) and (True in self.isLabelNum):
+            if event == cv2.EVENT_LBUTTONDOWN:
                 for i, roi in enumerate(self.roiPointList):
                     startX = roi[0]
                     startY = roi[1]
@@ -243,14 +234,15 @@ class CCheckGt:
                         cv2.circle(self.imgCurrent, (startX+(endX-startX)/2, startY+(endY-startY)/2), self.lineThickness, self.color_red, -1)
                         cv2.rectangle(self.imgCurrent, (startX,startY), (endX,endY), self.color_red, self.lineThickness)
                         cv2.imshow(self.state, self.imgCurrent)
-            elif event == cv2.EVENT_LBUTTONUP and (True in self.isLabelNum):
+            elif event == cv2.EVENT_LBUTTONUP:
                 # self.isDelete = False
-                for i in self.ChangeLabel:
-                    CurrentLabelIdx = self.isLabelNum.index(True)
-                    self.labelList[i] = self.LabelSet[CurrentLabelIdx]
-                self.imgCurrent = self.img.copy()
-                self.DrawRoiList(self.roiPointList, self.maskList, self.labelList)
-                cv2.imshow(self.state, self.imgCurrent)
+                if True in self.isLabelNum:
+                    for i in self.ChangeLabel:
+                        CurrentLabelIdx = self.isLabelNum.index(True)
+                        self.labelList[i] = self.LabelSet[CurrentLabelIdx]
+                    self.imgCurrent = self.img.copy()
+                    self.DrawRoiList(self.roiPointList, self.maskList, self.labelList)
+                    cv2.imshow(self.state, self.imgCurrent)
 
            
     def DrawRoiList(self, roiPointList = list(), maskList = list(), labelList = list()):
