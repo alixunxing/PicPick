@@ -37,7 +37,7 @@
   </Picture_Parameters>
 
   <Check_Parameters>
-      <LabelSet>Human Bike Car</LabelSet>
+      <LabelSet>Human Bike Car</LabelSet>   <!--MaxSize = 5 -->
   </Check_Parameters>
 	
 	<SavePath>D:\LYS\TEST</SavePath>

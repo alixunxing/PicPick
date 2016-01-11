@@ -17,7 +17,7 @@ class CCheckGt:
         self.isChoose = False # Is opened choose mode?
         self.isDelete = False # Is opened delete mode?
         self.isLabel  = False # Is opened labeling mode?
-        self.isLabelNum = [False]*3 # Which label is to choose? Currentlly, one can only choose 3 kinds of labels...
+        self.isLabelNum = [False]*5 # Which label is to choose? Currentlly, one can only choose 3 kinds of labels...
 
         self.isAppRect = False # Is a Rect appended into list right now?
 
@@ -90,17 +90,20 @@ class CCheckGt:
                     cv2.putText(self.imgCurrent, str(i+1)+':'+label, (0,30*(i+2)), 1, 2, self.color_green, self.lineThickness)
                 cv2.imshow(self.state, self.imgCurrent)
             elif keyInput == ord('1'):
+                self.isLabelNum = [False]*5
                 self.isLabelNum[0] = True
-                self.isLabelNum[1] = False
-                self.isLabelNum[2] = False
             elif keyInput == ord('2'):
+                self.isLabelNum = [False]*5
                 self.isLabelNum[1] = True
-                self.isLabelNum[0] = False
-                self.isLabelNum[2] = False
             elif keyInput == ord('3'):
+                self.isLabelNum = [False]*5
                 self.isLabelNum[2] = True
-                self.isLabelNum[0] = False
-                self.isLabelNum[1] = False
+            elif keyInput == ord('4'):
+                self.isLabelNum = [False]*5
+                self.isLabelNum[3] = True
+            elif keyInput == ord('5'):
+                self.isLabelNum = [False]*5
+                self.isLabelNum[4] = True
             elif keyInput == 27:
                 flag = 'exit'
                 break
@@ -204,39 +207,21 @@ class CCheckGt:
                 cv2.putText(self.imgCurrent, 'Delete Mode', (0,30), 1, 3, self.color_red, self.lineThickness)
                 cv2.imshow(self.state, self.imgCurrent)
         elif self.isLabel:
-            if self.isLabelNum[0]:
+            def WhichLabel(index):
                 self.imgCurrent = self.img.copy()
                 self.DrawRoiList(self.roiPointList, self.maskList, self.labelList)
                 cv2.putText(self.imgCurrent, 'Label Mode', (0,30), 1, 3, self.color_red, self.lineThickness)
                 for i, label in enumerate(self.LabelSet):
-                    if i==0:
+                    if i==index:
                         cv2.putText(self.imgCurrent, str(i+1)+':'+label, (0,30*(i+2)), 1, 2, self.color_red, self.lineThickness)
                         #self.isLabelNum[0] = False
                     else:
                         cv2.putText(self.imgCurrent, str(i+1)+':'+label, (0,30*(i+2)), 1, 2, self.color_green, self.lineThickness)
                 cv2.imshow(self.state, self.imgCurrent)
-            elif self.isLabelNum[1]:
-                self.imgCurrent = self.img.copy()
-                self.DrawRoiList(self.roiPointList, self.maskList, self.labelList)
-                cv2.putText(self.imgCurrent, 'Label Mode', (0,30), 1, 3, self.color_red, self.lineThickness)
-                for i, label in enumerate(self.LabelSet):
-                    if i==1:
-                        cv2.putText(self.imgCurrent, str(i+1)+':'+label, (0,30*(i+2)), 1, 2, self.color_red, self.lineThickness)
-                        #self.isLabelNum[1] = False
-                    else:
-                        cv2.putText(self.imgCurrent, str(i+1)+':'+label, (0,30*(i+2)), 1, 2, self.color_green, self.lineThickness)
-                cv2.imshow(self.state, self.imgCurrent)
-            elif self.isLabelNum[2]:
-                self.imgCurrent = self.img.copy()
-                self.DrawRoiList(self.roiPointList, self.maskList, self.labelList)
-                cv2.putText(self.imgCurrent, 'Label Mode', (0,30), 1, 3, self.color_red, self.lineThickness)
-                for i, label in enumerate(self.LabelSet):
-                    if i==2:
-                        cv2.putText(self.imgCurrent, str(i+1)+':'+label, (0,30*(i+2)), 1, 2, self.color_red, self.lineThickness)
-                        #self.isLabelNum[2] = False
-                    else:
-                        cv2.putText(self.imgCurrent, str(i+1)+':'+label, (0,30*(i+2)), 1, 2, self.color_green, self.lineThickness)
-                cv2.imshow(self.state, self.imgCurrent)
+            for i in range(len(self.isLabelNum)):
+                if self.isLabelNum[i]:
+                    WhichLabel(i)
+                    break
                            
             if (event == cv2.EVENT_LBUTTONDOWN) and (True in self.isLabelNum):
                 for i, roi in enumerate(self.roiPointList):
@@ -253,6 +238,8 @@ class CCheckGt:
                 # self.isDelete = False
                 for i in self.ChangeLabel:
                     CurrentLabelIdx = self.isLabelNum.index(True)
+                    if CurrentLabelIdx>=len(self.LabelSet):
+                        break
                     self.labelList[i] = self.LabelSet[CurrentLabelIdx]
                 self.ChangeLabel = []
                 self.imgCurrent = self.img.copy()
