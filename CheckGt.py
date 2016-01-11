@@ -89,21 +89,9 @@ class CCheckGt:
                 for i, label in enumerate(self.LabelSet):
                     cv2.putText(self.imgCurrent, str(i+1)+':'+label, (0,30*(i+2)), 1, 2, self.color_green, self.lineThickness)
                 cv2.imshow(self.state, self.imgCurrent)
-            elif keyInput == ord('1'):
+            elif ord('1')<= keyInput <= ord('5'):
                 self.isLabelNum = [False]*5
-                self.isLabelNum[0] = True
-            elif keyInput == ord('2'):
-                self.isLabelNum = [False]*5
-                self.isLabelNum[1] = True
-            elif keyInput == ord('3'):
-                self.isLabelNum = [False]*5
-                self.isLabelNum[2] = True
-            elif keyInput == ord('4'):
-                self.isLabelNum = [False]*5
-                self.isLabelNum[3] = True
-            elif keyInput == ord('5'):
-                self.isLabelNum = [False]*5
-                self.isLabelNum[4] = True
+                self.isLabelNum[keyInput-ord('1')] = True
             elif keyInput == 27:
                 flag = 'exit'
                 break
