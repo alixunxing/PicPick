@@ -41,6 +41,6 @@
   </Check_Parameters>
 	
 	<SavePath>D:\LYS\TEST</SavePath>
-	<CheckPath>D:\d</CheckPath>
+	<CheckPath>D:\d\train</CheckPath>
 
 </Parameter>

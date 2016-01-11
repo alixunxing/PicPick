@@ -91,10 +91,16 @@ class CCheckGt:
                 cv2.imshow(self.state, self.imgCurrent)
             elif keyInput == ord('1'):
                 self.isLabelNum[0] = True
+                self.isLabelNum[1] = False
+                self.isLabelNum[2] = False
             elif keyInput == ord('2'):
                 self.isLabelNum[1] = True
+                self.isLabelNum[0] = False
+                self.isLabelNum[2] = False
             elif keyInput == ord('3'):
                 self.isLabelNum[2] = True
+                self.isLabelNum[0] = False
+                self.isLabelNum[1] = False
             elif keyInput == 27:
                 flag = 'exit'
                 break
@@ -248,6 +254,7 @@ class CCheckGt:
                 for i in self.ChangeLabel:
                     CurrentLabelIdx = self.isLabelNum.index(True)
                     self.labelList[i] = self.LabelSet[CurrentLabelIdx]
+                self.ChangeLabel = []
                 self.imgCurrent = self.img.copy()
                 self.DrawRoiList(self.roiPointList, self.maskList, self.labelList)
                 cv2.imshow(self.state, self.imgCurrent)
