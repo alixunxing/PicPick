@@ -72,7 +72,7 @@ class CPicPick:
             self.rectList, self.maskList, returnFlag = self.doCheck.Check()
             if returnFlag == 'exit':
                 cv2.destroyAllWindows()
-                return True
+                os._exit(0)
             elif returnFlag == 'back':
                 if idx>0:
                     cv2.destroyAllWindows()
