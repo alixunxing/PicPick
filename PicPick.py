@@ -72,7 +72,7 @@ class CPicPick:
             self.rectList, self.maskList, returnFlag = self.doCheck.Check()
             if returnFlag == 'exit':
                 cv2.destroyAllWindows()
-                break
+                return True
             elif returnFlag == 'back':
                 if idx>0:
                     cv2.destroyAllWindows()
@@ -80,6 +80,13 @@ class CPicPick:
                 else:
                     cv2.destroyAllWindows()
                     self.CheckRecursion(0, imgNameList, txtNameList)
+            elif returnFlag == 'front':
+                if idx<=len(imgNameList)-1:
+                    cv2.destroyAllWindows()
+                    self.CheckRecursion(idx+1, imgNameList, txtNameList)
+                else:
+                    cv2.destroyAllWindows()
+                    self.CheckRecursion(len(imgNameList)-1, imgNameList, txtNameList)
             elif returnFlag == 'next':
                 if self.rectList:
                     if self.ScaleParamDict['IsNeedWHRatio'] == 1:

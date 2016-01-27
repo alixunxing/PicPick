@@ -33,7 +33,7 @@
   </Video_Parameters>
 
   <Picture_Parameters>
-      <PictureSrc>D:\LYS\TEST</PictureSrc>
+      <PictureSrc>D:\projects\tang\py++\Container_Number_Recognition\MSER++</PictureSrc>
   </Picture_Parameters>
 
   <Check_Parameters>
@@ -41,6 +41,6 @@
   </Check_Parameters>
 	
 	<SavePath>D:\LYS\TEST</SavePath>
-	<CheckPath>D:\d\train</CheckPath>
+	<CheckPath>D:\LYS\OriginalIMG\20151116\side</CheckPath>
 
 </Parameter>

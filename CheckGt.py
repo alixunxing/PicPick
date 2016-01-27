@@ -98,6 +98,9 @@ class CCheckGt:
             elif keyInput == ord(' '):
                 flag = 'next'
                 break
+            elif keyInput == ord('f'):
+                flag = 'front'
+                break
             elif keyInput == ord('b'):
                 flag = 'back'
                 break
