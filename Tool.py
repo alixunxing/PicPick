@@ -43,8 +43,6 @@ class CTool:
                 print 'Wrong input'
                 assert False
 
-        return objPath, imgPath, txtPath
-
     def ConfigReader(self):
         '''
         功能：读取配置文档，初始化参数。
@@ -52,10 +50,11 @@ class CTool:
         root = xmlParser.parse('config.xml')
 
         def GeneralParamReader():
-            GeneralNode = root.find('General_Parameters')
-            mode        = GeneralNode.find('Mode').text
-            srcFormat   = GeneralNode.find('SrcFormat').text
-            label       = GeneralNode.find('Label').text
+            GeneralNode   = root.find('General_Parameters')
+            mode          = GeneralNode.find('Mode').text
+            srcFormat     = GeneralNode.find('SrcFormat').text
+            label         = GeneralNode.find('Label').text
+            StartPosition = GeneralNode.find('StartPosition').text
 
             def ScaleParamReader():
                 ScaleNode       = GeneralNode.find('Scale_Parameters')
@@ -78,7 +77,7 @@ class CTool:
                 VisualParamDict = {'LineThickness':int(LineThickness), 'resolutionWid':int(resolutionWid), 'resolutionHgt':int(resolutionHgt)}
                 return VisualParamDict
 
-            return mode, srcFormat, label, ScaleParamReader(), VisualParamReader()
+            return mode, srcFormat, label, int(StartPosition), ScaleParamReader(), VisualParamReader()
 
         def VideoParamReader():
             VideoNode           = root.find('Video_Parameters')
@@ -88,8 +87,8 @@ class CTool:
             return int(VideoJumpFrame), VideoSrc
 
         def PictureParamReader():
-            PictureNode = root.find('Picture_Parameters')
-            PictureSrc  = PictureNode.find('PictureSrc').text
+            PictureNode   = root.find('Picture_Parameters')
+            PictureSrc    = PictureNode.find('PictureSrc').text
             return PictureSrc
 
         def CheckParamReader():
@@ -99,9 +98,11 @@ class CTool:
 
         def SavePathReader():
             SavePath = root.find('SavePath').text
-            objPath, imgPath, txtPath = self.FolderEmpty(SavePath)
+            objPath = os.path.join(SavePath, 'obj')
+            imgPath = os.path.join(SavePath, 'pos')
+            txtPath = os.path.join(SavePath, 'posGt')
             SavePathDict = {'objPath':objPath, 'imgPath':imgPath, 'txtPath':txtPath}
-            return SavePathDict
+            return SavePath, SavePathDict
 
         def CheckPathReader():
             CheckPath     = root.find('CheckPath').text

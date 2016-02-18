@@ -26,15 +26,17 @@ class CPicPick:
         self.mode            = GeneralParam[0]
         self.srcFormat       = GeneralParam[1]
         self.label           = GeneralParam[2]
-        self.ScaleParamDict  = GeneralParam[3]
-        self.VisualParamDict = GeneralParam[4]
+        self.StartPosition   = GeneralParam[3]-1
+        self.ScaleParamDict  = GeneralParam[4]
+        self.VisualParamDict = GeneralParam[5]
 
         self.videoJumpFrame  = VideoParam[0]
         self.videoSrc        = VideoParam[1]
 
-        self.pictureSrc      = PictureParam
-        self.LabelSet      = CheckParam
-        self.SavePathDict    = SavePath
+        self.pictureSrc      = PictureParam        
+        self.LabelSet        = CheckParam
+        self.SavePath        = SavePath[0]
+        self.SavePathDict    = SavePath[1]
         self.CheckPathDict   = CheckPath
 
         self.whRatio = self.ScaleParamDict['WHRatio']
@@ -61,7 +63,8 @@ class CPicPick:
         imgNameList.sort()
         txtNameList.sort()
         self.doCheck = CCheckGt(self.CheckPathDict)
-        self.CheckRecursion(0, imgNameList, txtNameList)
+        assert self.StartPosition<=len(imgNameList)
+        self.CheckRecursion(self.StartPosition, imgNameList, txtNameList)
 
     def CheckRecursion(self, startIdx, imgNameList, txtNameList):
         for idx in range(startIdx, len(imgNameList)):
@@ -102,12 +105,15 @@ class CPicPick:
                 assert False
 
     def PicPick(self):
+        ToolObj = CTool()
+        ToolObj.FolderEmpty(self.SavePath)
         self.doPicPick = self.Create_Mode()
 
         if self.srcFormat == 'picture':
             imgNameList = glob.glob(os.path.join(self.pictureSrc, '*.bmp')) + glob.glob(os.path.join(self.pictureSrc, '*.png')) + glob.glob(os.path.join(self.pictureSrc, '*.jpg'))
             assert imgNameList
-            self.PictureRecursion(0, imgNameList)
+            assert self.StartPosition<=len(imgNameList)
+            self.PictureRecursion(self.StartPosition, imgNameList)
             cv2.destroyAllWindows()
         elif self.srcFormat == 'video':
             cap = cv2.VideoCapture(self.videoSrc)

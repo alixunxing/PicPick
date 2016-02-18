@@ -1,7 +1,7 @@
 <?xml version="1.0" ?>
 <Parameter>
   <General_Parameters>
-    	<Mode>Check</Mode>
+      <Mode>CharacterPick</Mode>
 	    <!--Mode:
         1.Check
         2.PreChooseSingleObject
@@ -9,9 +9,11 @@
         4.FreeChoose
         5.CharacterPick
         -->
-	    <SrcFormat>picture</SrcFormat>
-	    <!--SrcFormat:1.picture 2.video-->
+	  <SrcFormat>picture</SrcFormat>
+	  <!--SrcFormat:1.picture 2.video-->
       <Label>Text_String</Label>
+      <StartPosition>1</StartPosition>
+	  <!--StartPosition: default start from number '1'-->
       <Scale_Parameters>
         	<ScaleBy>width</ScaleBy>
 	        <!--ScaleBy:1.width 2.height-->
