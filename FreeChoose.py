@@ -121,7 +121,7 @@ class CFreeChoose:
         def Roi2Rect(roiList):
             rectList = list()
             for roi in roiList:
-                rect = [roi[0], roi[1], roi[2]-roi[0]+1, roi[3]-roi[1]+1]
+                rect = [roi[0], roi[1], roi[2]-roi[0], roi[3]-roi[1]]
                 rectList.append(rect)
             return rectList
         self.rectList = Roi2Rect(self.roiPointList)
@@ -167,7 +167,7 @@ class CFreeChoose:
         def Roi2Rect(roiList):
             rectList = list()
             for roi in roiList:
-                rect = [roi[0], roi[1], roi[2]-roi[0]+1, roi[3]-roi[1]+1]
+                rect = [roi[0], roi[1], roi[2]-roi[0], roi[3]-roi[1]]
                 rectList.append(rect)
             return rectList
         self.rectList = Roi2Rect(self.roiPointList)
